@@ -1,5 +1,6 @@
 import styles from "./EditProduct.module.css";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from "react-router-dom";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import FormContainer from "../../components/FormContainer/FormContainer";
@@ -7,7 +8,6 @@ import CustomButton from "../../components/UI/CustomButton/CustomButton";
 import CustomRadioButton from "../../components/UI/CustomRadioButton/CustomRadioButton";
 import CustomModal from "../../components/CustomModal/CustomModal";
 import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
-import { useDispatch, useSelector } from "react-redux";
 import {
   archiveProductById,
   getProductById,
@@ -21,11 +21,20 @@ import handleError from "../../utils/handleError";
 export default function EditProduct() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const formData = useSelector((state) => state.product.data);
+  const dispatch = useDispatch();
+  const productData = useSelector((state) => state.product.data); 
   const { setData, clearData } = productActions;
+  const [formData, setFormData] = useState({
+    name: "",
+    identification_number: "",
+    unit: "",
+    quantity: "",
+    price: "",
+    category: "",
+    state: "Normal",
+  });
   const { id } = useParams();
   const isEdit = id !== undefined;
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,7 +72,7 @@ export default function EditProduct() {
   };
 
   const isFormValid = () => {
-    const requiredFields = ["name", "idNumber", "quantity", "price"];
+    const requiredFields = ["name", "identification_number", "quantity", "price"];
     return requiredFields.every((field) => formData[field] !== "");
   };
 
@@ -71,7 +80,7 @@ export default function EditProduct() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    dispatch(setData({ [name]: value }));
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleNumericInputChange = (e) => {
@@ -80,7 +89,7 @@ export default function EditProduct() {
       handleInputChange(e);
     }
   };
-
+ console.log(formData)
   return (
     <div className={styles.EditProduct}>
       <div className="narrowContainer">
@@ -90,7 +99,7 @@ export default function EditProduct() {
         />
         <FormContainer>
           <form className={styles.form} onSubmit={handleSubmit}>
-            <fieldset className={styles.formFlexRow}>
+          <fieldset className={styles.formFlexRow}>
               <label className={styles.formInput}>
                 <p>Наименование</p>
                 <input
@@ -117,17 +126,18 @@ export default function EditProduct() {
               >
                 <p>Ед.измерения</p>
                 <CustomSelect
-                  className={styles.unitSelect}
-                  name="unit"
-                  value={formData.unit}
-                  options={[
-                    { value: "item", label: "Шт" },
-                    { value: "kilogram", label: "Кг" },
-                    { value: "liter", label: "Л" },
-                    { value: "m", label: "М" },
-                  ]}
-                  onChange={(value) => dispatch(setData({ unit: value }))}
-                />
+                className={styles.unitSelect}
+                name="unit"
+                value={formData.unit}
+                options={[
+                  { value: "item", label: "Шт" },
+                  { value: "kilogram", label: "Кг" },
+                  { value: "liter", label: "Л" },
+                  { value: "m", label: "М" },
+                ]}
+                onChange={(value) => setFormData({ ...formData, unit: value })}
+              />
+
               </label>
               <label className={styles.formInput}>
                 <p>Количество</p>
@@ -169,7 +179,7 @@ export default function EditProduct() {
                     { value: "alcohol", label: "Алкогольный" },
                     { value: "notAlcohol", label: "Безалкогольный" },
                   ]}
-                  onChange={(value) => dispatch(setData({ category: value }))}
+                  onChange={(value) => setFormData({ ...formData, category: value })}
                 />
               </label>
               <div className={styles.formInput}>
