@@ -1,14 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
+import toastify from "../utils/toastify";
 
 export const getDistributorById = createAsyncThunk(
   "distributor/getDistributorById",
   async (id) => {
     try {
-      const response = await axiosPrivate.get(`/distributors/${id}/`);
+      const response = await toastify(axiosPrivate.get(`/distributors/${id}/`));
+      //const response = await axiosPrivate.get(`/distributors/${id}/`);
       return response.data;
     } catch (error) {
-      console.warn(error);
       return error;
     }
   },

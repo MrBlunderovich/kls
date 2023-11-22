@@ -47,7 +47,11 @@ export default function EditDistributor() {
   useEffect(() => {
     if (isEdit) {
       dispatch(getDistributorById(id)).then((action) => {
-        setFormData(action.payload);
+        console.log(action);
+        console.log(action.payload?.response?.status);
+        if (!action.payload?.response?.status) {
+          setFormData(action.payload);
+        }
       });
     }
   }, [id]);
