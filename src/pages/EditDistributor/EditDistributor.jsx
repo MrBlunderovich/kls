@@ -64,15 +64,16 @@ export default function EditDistributor() {
       "inn",
       "address",
       "actual_place_of_residence",
-      "passport",
+      "passport_id",
+      "passport_series",
       "issued_by",
       "issue_date",
       "validity",
       "contact",
     ];
-    return requiredFields.every((field) => formData[field] !== "");
+    return requiredFields.every((field) => !!formData[field]);
   }
-
+  console.log("---");
   const formIsValid = isFormValid();
 
   function handleInputChange(e) {
@@ -82,7 +83,7 @@ export default function EditDistributor() {
 
   function handleNumberChange(e) {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: +value });
+    setFormData({ ...formData, [name]: value });
   }
 
   function handleDateChange(e) {
