@@ -1,12 +1,12 @@
 import styles from "./EditDistributor.module.css";
+import { useDispatch } from "react-redux";
 import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import FormContainer from "../../components/FormContainer/FormContainer";
 import CustomButton from "../../components/UI/CustomButton/CustomButton";
 import getApp from "../../assets/icons/get_app.svg";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CustomModal from "../../components/CustomModal/CustomModal";
-import { useDispatch } from "react-redux";
 import {
   archiveDistributorById,
   createDistributor,
@@ -14,6 +14,7 @@ import {
   getDistributorById,
 } from "../../redux/editDistributorSlice";
 import { PATHS } from "../../common/constants";
+import yearLimiter from "../../utils/yearLimiter";
 
 export default function EditDistributor() {
   const [formData, setFormData] = useState({
@@ -28,8 +29,8 @@ export default function EditDistributor() {
     issued_by: "",
     issue_date: "",
     validity: "",
-    contact1: "",
-    contact2: "",
+    contact: null,
+    contact2: null,
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,12 +43,16 @@ export default function EditDistributor() {
   //TODO: if pathname includes 'edit', must have an id
   const passport =
     formData.passport_series.toString() + formData.passport_id.toString();
+
   useEffect(() => {
     if (isEdit) {
-      dispatch(getDistributorById(id)).then((action) => {
-        console.log(action);
-        setFormData(action.payload);
-      });
+      dispatch(getDistributorById(id))
+        .unwrap()
+        .then(setFormData)
+        .catch((err) => {
+          navigate("/not-found", { replace: true });
+        });
+      //.catch(err=>toast.error(err.message))
     }
   }, [id]);
 
@@ -59,21 +64,32 @@ export default function EditDistributor() {
       "inn",
       "address",
       "actual_place_of_residence",
-      "passport",
+      "passport_id",
+      "passport_series",
       "issued_by",
       "issue_date",
       "validity",
-      "contact1",
+      "contact",
     ];
-    return requiredFields.every((field) => formData[field] !== "");
+    return requiredFields.every((field) => !!formData[field]);
   }
 
   const formIsValid = isFormValid();
 
-  const handleInputChange = (e) => {
+  function handleInputChange(e) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
+  }
+
+  function handleNumberChange(e) {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  }
+
+  function handleDateChange(e) {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: yearLimiter(value) });
+  }
 
   function handlePassportChange(event) {
     const valueArray = event.target.value.split("");
@@ -101,18 +117,34 @@ export default function EditDistributor() {
     setShowSaveModal(true);
   }
 
+  function createFormDataObject(data) {
+    const dataWithPhoto = { ...data };
+    if (typeof data.photo === "string") {
+      delete dataWithPhoto.photo;
+    }
+    const formDataObject = new FormData();
+    Object.keys(dataWithPhoto).forEach((key) => {
+      dataWithPhoto[key] && formDataObject.append(key, dataWithPhoto[key]);
+    });
+    return formDataObject;
+  }
+
   function handleConfirmSave() {
     if (isEdit) {
-      dispatch(editDistributorById({ id, formData })).then((action) => {
+      dispatch(
+        editDistributorById({ id, formData: createFormDataObject(formData) }),
+      ).then((action) => {
         setShowSaveModal(false);
         navigate(PATHS.distributors);
       });
       return;
     }
-    dispatch(createDistributor(formData)).then((action) => {
-      setShowSaveModal(false);
-      navigate(PATHS.distributors);
-    });
+    dispatch(createDistributor(createFormDataObject(formData))).then(
+      (action) => {
+        setShowSaveModal(false);
+        navigate(PATHS.distributors);
+      },
+    );
   }
 
   function handleConfirmDelete() {
@@ -120,6 +152,12 @@ export default function EditDistributor() {
       setShowDeleteModal(false);
       navigate(PATHS.distributors);
     });
+  }
+
+  function getPhotoUrl() {
+    if (!formData.photo) return null;
+    if (typeof formData.photo === "string") return formData.photo;
+    return URL.createObjectURL(formData.photo);
   }
 
   return (
@@ -140,14 +178,23 @@ export default function EditDistributor() {
                   accept="image/*"
                   onChange={handlePhotoChange}
                 />
-                <div className={styles.getPhoto}>
-                  <img src={getApp} alt="icon" />
-                  <span>Добавить</span>
-                  <span>фотографию</span>
-                </div>
+                {formData.photo ? (
+                  <img
+                    className={styles.picture}
+                    src={getPhotoUrl()}
+                    alt="distributor photo"
+                  />
+                ) : (
+                  <div className={styles.getPhoto}>
+                    <img src={getApp} alt="icon" />
+                    <span>Добавить</span>
+                    <span>фотографию</span>
+                  </div>
+                )}
               </label>
-              <fieldset className={styles.formFlexRow}>
-                <label className={`${styles.formInput} ${styles.addressInput}`}>
+
+              <div className={styles.gridContainer}>
+                <label className={`formLabel ${styles.double}`}>
                   <p>ФИО</p>
                   <input
                     type="text"
@@ -158,7 +205,7 @@ export default function EditDistributor() {
                     required
                   />
                 </label>
-                <label className={styles.formInput}>
+                <label className={`formLabel ${styles.double}`}>
                   <p>Фактическое место жительства</p>
                   <input
                     type="text"
@@ -169,9 +216,8 @@ export default function EditDistributor() {
                     required
                   />
                 </label>
-              </fieldset>
-              <fieldset className={styles.formFlexRow}>
-                <label className={`${styles.formInput} ${styles.addressInput}`}>
+
+                <label className={`formLabel ${styles.double}`}>
                   <p>Адрес по прописке</p>
                   <input
                     type="text"
@@ -182,7 +228,7 @@ export default function EditDistributor() {
                     required
                   />
                 </label>
-                <label className={styles.formInput}>
+                <label className={`formLabel ${styles.single}`}>
                   <p>Регион</p>
                   <input
                     type="text"
@@ -193,8 +239,7 @@ export default function EditDistributor() {
                     required
                   />
                 </label>
-
-                <label className={styles.formInput}>
+                <label className={`formLabel ${styles.single}`}>
                   <p>Серия и номер паспорта</p>
                   <input
                     type="text"
@@ -205,9 +250,8 @@ export default function EditDistributor() {
                     required
                   />
                 </label>
-              </fieldset>
-              <fieldset className={styles.formFlexRow}>
-                <label className={`${styles.formInput} ${styles.innInput}`}>
+
+                <label className={`formLabel ${styles.single}`}>
                   <p>ИНН</p>
                   <input
                     type="text"
@@ -218,8 +262,7 @@ export default function EditDistributor() {
                     required
                   />
                 </label>
-
-                <label className={styles.formInput}>
+                <label className={`formLabel ${styles.single}`}>
                   <p>Орган выдачи</p>
                   <input
                     type="text"
@@ -230,78 +273,76 @@ export default function EditDistributor() {
                     required
                   />
                 </label>
-                <label className={styles.formInput}>
+                <label className={`formLabel ${styles.single}`}>
                   <p>Дата выдачи</p>
                   <input
-                    type="text"
+                    type="date"
                     name="issue_date"
                     value={formData.issue_date}
-                    onChange={handleInputChange}
-                    placeholder="00.00.0000"
+                    onChange={handleDateChange}
                     required
                   />
                 </label>
-                <label className={styles.formInput}>
+                <label className={`formLabel ${styles.single}`}>
                   <p>Срок действия</p>
                   <input
-                    type="text"
+                    type="date"
                     name="validity"
                     value={formData.validity}
-                    onChange={handleInputChange}
-                    placeholder="00.00.0000"
+                    onChange={handleDateChange}
                     required
                   />
                 </label>
-              </fieldset>
-              <fieldset
-                className={`${styles.formFlexRow} ${styles.phoneNumberRow}`}
-              >
-                <label className={`${styles.formInput} ${styles.phoneInput}`}>
-                  <p>Контактный номер 1</p>
-                  <div className={styles.inputContainer}>
-                    <span className={styles.countryCode}>+996</span>
-                    <input
-                      type="tel"
-                      name="contact1"
-                      value={formData.contact1 || ""}
-                      onChange={handleInputChange}
-                      placeholder=""
-                      required
-                    />
-                  </div>
-                </label>
-                <label className={`${styles.formInput} ${styles.phoneInput}`}>
-                  <p>
-                    Контактный номер 2
-                    <span className={styles.optional}>
-                      {" (необязательно)"}
-                    </span>
-                  </p>
-                  <div className={styles.inputContainer}>
-                    <span className={styles.countryCode}>+996</span>
-                    <input
-                      type="tel"
-                      name="contact2"
-                      value={formData.contact2 || ""}
-                      onChange={handleInputChange}
-                      placeholder=""
-                    />
-                  </div>
-                </label>
-              </fieldset>
-              <div className={`${styles.formFlexRow} ${styles.formButtonRow}`}>
-                {isEdit && (
-                  <CustomButton
-                    type="button"
-                    variant="secondary"
-                    onClick={() => setShowDeleteModal(true)}
-                  >
-                    Удалить
+
+                <div className={`${styles.contacts} ${styles.full}`}>
+                  <label className={`formLabel ${styles.phoneLabel}`}>
+                    <p>Контактный номер 1</p>
+                    <div className={styles.inputContainer}>
+                      <span className={styles.countryCode}>+996</span>
+                      <input
+                        type="tel"
+                        name="contact"
+                        value={formData.contact || ""}
+                        onChange={handleNumberChange}
+                        placeholder=""
+                        required
+                      />
+                    </div>
+                  </label>
+                  <label className={`formLabel ${styles.phoneLabel}`}>
+                    <p>
+                      Контактный номер 2
+                      <span className={styles.optional}>
+                        {" (необязательно)"}
+                      </span>
+                    </p>
+                    <div className={styles.inputContainer}>
+                      <span className={styles.countryCode}>+996</span>
+                      <input
+                        type="tel"
+                        name="contact2"
+                        value={formData.contact2 || ""}
+                        onChange={handleNumberChange}
+                        placeholder=""
+                      />
+                    </div>
+                  </label>
+                </div>
+
+                <div className={`${styles.buttons} ${styles.full}`}>
+                  {isEdit && (
+                    <CustomButton
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setShowDeleteModal(true)}
+                    >
+                      Удалить
+                    </CustomButton>
+                  )}
+                  <CustomButton width="xwide" disabled={!formIsValid}>
+                    Сохранить
                   </CustomButton>
-                )}
-                <CustomButton width="xwide" disabled={!formIsValid}>
-                  Сохранить
-                </CustomButton>
+                </div>
               </div>
             </form>
           </FormContainer>
@@ -329,7 +370,7 @@ export default function EditDistributor() {
     </>
   );
 }
-
+//FIX_ME )
 /* import styles from "./EditDistributor.module.css";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";

@@ -10,7 +10,7 @@ export const logUserIn = createAsyncThunk(
     try {
       const response = await axiosPublic.post(ENDPOINTS.login, formData);
       const data = response.data;
-      localStorage.setItem("user", data?.role?.username);
+      localStorage.setItem("user", data?.role);
       localStorage.setItem("access", data?.access);
       localStorage.setItem("refresh", data?.refresh);
       return data;
@@ -46,7 +46,7 @@ export const authSlice = createSlice({
       state.error = null;
     });
     builder.addCase(logUserIn.fulfilled, (state, action) => {
-      state.user = action.payload.role?.username;
+      state.user = action.payload.role;
       state.isLoading = false;
     });
     builder.addCase(logUserIn.rejected, (state, action) => {

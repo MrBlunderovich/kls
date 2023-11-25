@@ -2,8 +2,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
 import { axiosDummy } from "../api/axiosDummy";
 
+const name = "transaction";
+
 export const getDistributorById = createAsyncThunk(
-  "transaction/getDistributorById",
+  `${name}/getDistributorById`,
   async (id) => {
     try {
       const response = await axiosPrivate.get(`/distributors/${id}/`);
@@ -16,7 +18,7 @@ export const getDistributorById = createAsyncThunk(
 );
 
 export const getOrdersById = createAsyncThunk(
-  "transaction/getOrdersById",
+  `${name}/getOrdersById`,
   async ({ id, search }) => {
     try {
       const response = await axiosDummy.get(`/distributor/orders/${id}/`, {
@@ -46,13 +48,13 @@ const initialState = {
 };
 
 export const transactionSlice = createSlice({
-  name: "transaction",
+  name,
   initialState,
   reducers: {
     setSearch: (state, action) => {
       state.search = action.payload;
     },
-    updateSource: (state, action) => {
+    updateSource: (state) => {
       const target = state.target;
       const source = state.source;
       let anyMatches = false;

@@ -1,5 +1,6 @@
 import styles from "./QuantityController.module.css";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import upIcon from "../../../assets/icons/bxs_up-arrow.svg";
 import downIcon from "../../../assets/icons/bxs_down-arrow.svg";
 
@@ -33,6 +34,9 @@ export default function QuantityController({ value, maxValue, onChange }) {
       return;
     }
     if (newValue > maxValue) {
+      toast.error("Нельзя превысить доступное количество товара", {
+        toastId: "limitReached",
+      });
       setInputValue(maxValue);
     } else {
       setInputValue(newValue);

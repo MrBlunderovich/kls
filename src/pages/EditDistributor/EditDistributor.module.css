@@ -24,6 +24,11 @@
   align-items: center;
   justify-content: center;
   border-radius: 10px;
+  overflow: hidden;
+}
+
+.fileInput:has(.picture) {
+  border-color: transparent;
 }
 
 .fileInput input[type="file"] {
@@ -36,69 +41,61 @@
   align-items: center;
 }
 
-.formFlexRow {
-  border: none;
+.picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.gridContainer {
+  display: grid;
+  gap: 34px 29px;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.single {
+  grid-column: auto / span 1;
+}
+
+.double {
+  grid-column: auto / span 2;
+}
+
+.full {
+  grid-column: 1 / -1;
   display: flex;
   gap: 29px;
-  width: 100%;
-}
-
-.phoneNumberRow {
   justify-content: start;
+  flex-wrap: wrap;
 }
 
-.formButtonRow {
-  margin-top: 32px;
+.buttons {
+  margin-top: 38px;
+  flex-wrap: wrap-reverse;
 }
 
-.formInput {
-  flex-grow: 1;
-}
-
-.formInput p {
-  margin-bottom: 10px;
-}
-
-.formInput input {
-  height: 44px;
-  padding-inline: 15px;
-  display: flex;
-  align-items: center;
-  border-radius: 10px;
-  border: 1px solid var(--stroke, #e7e8e7);
-  background-color: rgba(241, 241, 241, 0.6);
-  width: 100%;
-}
-
-.addressInput {
-  flex: 0 0 394px;
-}
-
-.innInput {
+.phoneLabel {
   flex: 0 0 309px;
 }
 
-.phoneInput {
-  flex: 0 0 309px;
-}
-
-.phoneInput input {
+.phoneLabel input {
   padding-left: 68px;
 }
 
 .inputContainer {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .countryCode {
   position: absolute;
-  top: 50%;
-  left: 1px;
-  transform: translateY(-50%);
+  left: 2px;
   pointer-events: none;
   border: 1px solid #e7e8e7;
   width: 60px;
-  height: 42px;
+  height: 40px;
   border-radius: 10px;
   display: flex;
   justify-content: center;
@@ -107,4 +104,23 @@
 
 .optional {
   color: var(--848484, #848484);
+}
+
+@media (max-width: 1000px) {
+  .single {
+    grid-column: auto / span 2;
+  }
+}
+
+@media (max-width: 650px) {
+  .single,
+  .double {
+    grid-column: auto / span 4;
+  }
+  .phoneLabel {
+    flex: 1 1 309px;
+  }
+  .buttons button {
+    width: 100%;
+  }
 }

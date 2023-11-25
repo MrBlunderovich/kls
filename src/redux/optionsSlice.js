@@ -1,8 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosDummy } from "../api/axiosDummy";
 
+const name = "options";
+
 export const fetchOptions = createAsyncThunk(
-  "options/fetchOptions",
+  `${name}/fetchOptions`,
   async (_, thunkAPI) => {
     try {
       const response = await axiosDummy.get(`/options`);
@@ -22,7 +24,7 @@ const initialState = {
 };
 
 export const optionsSlice = createSlice({
-  name: "options",
+  name,
   initialState,
   reducers: {},
   extraReducers: (builder) => {

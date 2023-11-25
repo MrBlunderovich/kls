@@ -3,7 +3,7 @@ import styles from "./DistributorInfo.module.css";
 export default function DistributorInfo({ info, variant = "large" }) {
   if (!info) return "No info";
 
-  const { name, inn, region, contact1, contact2 } = info;
+  const { name, inn, region, contact, contact2 } = info;
 
   return (
     <div
@@ -20,7 +20,7 @@ export default function DistributorInfo({ info, variant = "large" }) {
         <InfoRow label="ФИО" value={name} />
         <InfoRow label="ИНН" value={inn} />
         <InfoRow label="Регион" value={region} />
-        <InfoRow label="Контактный номер" value={contact1} />
+        <InfoRow label="Контактный номер" value={contact} />
         <InfoRow label="Контактный номер" value={contact2} />
       </div>
     </div>

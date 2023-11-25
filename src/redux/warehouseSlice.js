@@ -1,23 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
-import { axiosDummy } from "../api/axiosDummy";
+
+const name = "warehouse";
 
 export const fetchWarehouseItems = createAsyncThunk(
-  "warehouse/fetchWarehouseItems",
-  async (queryParams) => {
-    try {
-      const response = await axiosDummy.get(`/warehouse/?limit=10000`, {
-        params: queryParams,
-      });
-      return response.data.results;
-    } catch (error) {
-      console.warn(error);
-    }
-  },
-);
-/* 
-export const fetchWarehouseItems = createAsyncThunk(
-  "warehouse/fetchWarehouseItems",
+  `${name}/fetchWarehouseItems`,
   async (queryParams) => {
     try {
       const response = await axiosPrivate.get(`/products/?limit=10000`, {
@@ -28,22 +15,19 @@ export const fetchWarehouseItems = createAsyncThunk(
       console.warn(error);
     }
   },
-); */
+);
 
 const initialState = {
   search: "",
   category: "",
-  state: "Valid",
+  state: "normal",
   items: [],
-  options: {
-    search: [],
-  },
   isLoading: false,
   error: null,
 };
 
 export const warehouseSlice = createSlice({
-  name: "warehouse",
+  name,
   initialState,
   reducers: {
     setCategory: (state, action) => {
@@ -56,7 +40,12 @@ export const warehouseSlice = createSlice({
       state.search = action.payload;
     },
     clearData: (state, action) => {
-      state.items = [];
+      state.items = initialState.items;
+      state.search = initialState.search;
+      state.category = initialState.category;
+      state.state = initialState.state;
+      state.isLoading = initialState.isLoading;
+      state.error = initialState.error;
     },
   },
   extraReducers: (builder) => {

@@ -44,6 +44,12 @@
   margin-inline: auto;
 }
 
+.wideContainer {
+  max-width: calc(1440px + (2 * var(--container-padding)));
+  padding-inline: var(--container-padding);
+  margin-inline: auto;
+}
+
 .fullWidthContainer {
   padding-inline: var(--container-padding);
 }
@@ -51,4 +57,23 @@
 a,
 a:visited {
   text-decoration: none;
+}
+
+.formLabel {
+  flex-grow: 1;
+}
+
+.formLabel p {
+  margin-bottom: 10px;
+}
+
+.formLabel input {
+  height: 44px;
+  padding-inline: 15px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid var(--stroke, #e7e8e7);
+  background-color: rgba(241, 241, 241, 0.6);
+  width: 100%;
 }

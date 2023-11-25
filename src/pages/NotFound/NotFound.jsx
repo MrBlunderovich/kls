@@ -10,7 +10,7 @@ export default function NotFound() {
       <p className={styles.description}>
         Эта страница не найдена, мы уже работаем, чтобы ее восстановить!
       </p>
-      <Link to="/" className={styles.buttonLink}>
+      <Link to="/" className={styles.buttonLink} replace>
         <CustomButton className={styles.button}>
           Вернуться на главную
         </CustomButton>

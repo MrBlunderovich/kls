@@ -1,8 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
 
+const name = "distributors";
+
 export const fetchDistributors = createAsyncThunk(
-  "distributors/fetchDistributors",
+  `${name}/fetchDistributors`,
   async () => {
     try {
       const response = await axiosPrivate.get(`/distributors/?limit=10000`);
@@ -20,7 +22,7 @@ const initialState = {
 };
 
 export const distributorsSlice = createSlice({
-  name: "distributors",
+  name,
   initialState,
   reducers: {},
   extraReducers: (builder) => {

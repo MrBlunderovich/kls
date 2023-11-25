@@ -1,21 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
 
+const name = "distributor";
+
 export const getDistributorById = createAsyncThunk(
-  "distributor/getDistributorById",
+  `${name}/getDistributorById`,
   async (id) => {
-    try {
-      const response = await axiosPrivate.get(`/distributors/${id}/`);
-      return response.data;
-    } catch (error) {
-      console.warn(error);
-      return error;
-    }
+    const response = await axiosPrivate.get(`/distributors/${id}/`);
+    return response.data;
   },
 );
 
 export const createDistributor = createAsyncThunk(
-  "distributor/createDistributor",
+  `${name}/createDistributor`,
   async (formData) => {
     try {
       const response = await axiosPrivate.post(`/distributors/`, formData);
@@ -28,7 +25,7 @@ export const createDistributor = createAsyncThunk(
 );
 
 export const editDistributorById = createAsyncThunk(
-  "distributor/editDistributorById",
+  `${name}/editDistributorById`,
   async ({ id, formData }) => {
     try {
       const response = await axiosPrivate.put(`/distributors/${id}/`, formData);
@@ -41,7 +38,7 @@ export const editDistributorById = createAsyncThunk(
 );
 
 export const archiveDistributorById = createAsyncThunk(
-  "distributor/archiveDistributorById",
+  `${name}/archiveDistributorById`,
   async (id) => {
     try {
       const response = await axiosPrivate.delete(`/distributors/${id}/`);
@@ -59,7 +56,7 @@ const initialState = {
 };
 
 export const distributorSlice = createSlice({
-  name: "distributor",
+  name,
   initialState,
   reducers: {},
   extraReducers: (builder) => {

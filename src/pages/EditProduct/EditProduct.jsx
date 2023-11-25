@@ -1,6 +1,6 @@
 import styles from "./EditProduct.module.css";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import FormContainer from "../../components/FormContainer/FormContainer";
@@ -22,7 +22,7 @@ export default function EditProduct() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const dispatch = useDispatch();
-  const productData = useSelector((state) => state.product.data); 
+  const productData = useSelector((state) => state.product.data);
   const { setData, clearData } = productActions;
   const [formData, setFormData] = useState({
     name: "",
@@ -72,7 +72,12 @@ export default function EditProduct() {
   };
 
   const isFormValid = () => {
-    const requiredFields = ["name", "identification_number", "quantity", "price"];
+    const requiredFields = [
+      "name",
+      "identification_number",
+      "quantity",
+      "price",
+    ];
     return requiredFields.every((field) => formData[field] !== "");
   };
 
@@ -89,7 +94,7 @@ export default function EditProduct() {
       handleInputChange(e);
     }
   };
- console.log(formData)
+  console.log(formData);
   return (
     <div className={styles.EditProduct}>
       <div className="narrowContainer">
@@ -99,7 +104,7 @@ export default function EditProduct() {
         />
         <FormContainer>
           <form className={styles.form} onSubmit={handleSubmit}>
-          <fieldset className={styles.formFlexRow}>
+            <fieldset className={styles.formFlexRow}>
               <label className={styles.formInput}>
                 <p>Наименование</p>
                 <input
@@ -126,18 +131,16 @@ export default function EditProduct() {
               >
                 <p>Ед.измерения</p>
                 <CustomSelect
-                className={styles.unitSelect}
-                name="unit"
-                value={formData.unit}
-                options={[
-                  { value: "item", label: "Шт" },
-                  { value: "kilogram", label: "Кг" },
-                  { value: "liter", label: "Л" },
-                  { value: "m", label: "М" },
-                ]}
-                onChange={(value) => setFormData({ ...formData, unit: value })}
-              />
-
+                  className={styles.unitSelect}
+                  name="unit"
+                  value={formData.unit}
+                  options={[
+                    { value: "item", label: "Шт" },
+                    { value: "kilogram", label: "Кг" },
+                    { value: "liter", label: "Литр" },
+                  ]}
+                  onChange={(value) => dispatch(setData({ unit: value }))}
+                />
               </label>
               <label className={styles.formInput}>
                 <p>Количество</p>
@@ -176,10 +179,13 @@ export default function EditProduct() {
                   name="category"
                   value={formData.category}
                   options={[
-                    { value: "alcohol", label: "Алкогольный" },
-                    { value: "notAlcohol", label: "Безалкогольный" },
+                    { value: "Алкогольное", label: "Алкогольное" },
+                    { value: "Безалкогольное", label: "Безалкогольное" },
+                    { value: "Оборудование", label: "Оборудование" },
                   ]}
-                  onChange={(value) => setFormData({ ...formData, category: value })}
+                  onChange={(value) =>
+                    setFormData({ ...formData, category: value })
+                  }
                 />
               </label>
               <div className={styles.formInput}>
@@ -189,8 +195,8 @@ export default function EditProduct() {
                     <CustomRadioButton
                       className={styles.radioButton}
                       name="state"
-                      value="Normal"
-                      checked={formData.state === "Normal"}
+                      value="normal"
+                      checked={formData.state === "normal"}
                       onChange={handleInputChange}
                     />
                     <span>Норма</span>
@@ -199,8 +205,8 @@ export default function EditProduct() {
                     <CustomRadioButton
                       className={styles.radioButton}
                       name="state"
-                      value="Invalid"
-                      checked={formData.state === "Invalid"}
+                      value="defect"
+                      checked={formData.state === "defect"}
                       onChange={handleInputChange}
                       disabled={!isEdit}
                     />

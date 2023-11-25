@@ -1,8 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
 
+const name = "product";
+
 export const postProduct = createAsyncThunk(
-  "product/postProduct",
+  `${name}/postProduct`,
   async (_, thunkAPI) => {
     try {
       const formData = thunkAPI.getState().product.data;
@@ -15,7 +17,7 @@ export const postProduct = createAsyncThunk(
 );
 
 export const updateProductById = createAsyncThunk(
-  "product/updateProductById",
+  `${name}/updateProductById`,
   async (id, thunkAPI) => {
     try {
       const formData = thunkAPI.getState().product.data;
@@ -28,7 +30,7 @@ export const updateProductById = createAsyncThunk(
 );
 
 export const archiveProductById = createAsyncThunk(
-  "product/archiveProductById",
+  `${name}/archiveProductById`,
   async (id) => {
     try {
       const response = await axiosPrivate.delete(`/products/${id}/`);
@@ -40,7 +42,7 @@ export const archiveProductById = createAsyncThunk(
 );
 
 export const getProductById = createAsyncThunk(
-  "product/getProductById",
+  `${name}/getProductById`,
   async (id) => {
     try {
       const response = await axiosPrivate.get(`/products/${id}/`);
@@ -58,7 +60,7 @@ const defaultData = {
   price: "",
   unit: "liter",
   category: "alcohol",
-  state: "Normal",
+  state: "normal",
 };
 
 const initialState = {
@@ -66,7 +68,7 @@ const initialState = {
 };
 
 const productSlice = createSlice({
-  name: "product",
+  name,
   initialState,
   reducers: {
     setData: (state, action) => {

@@ -61,7 +61,7 @@ export default function Transaction() {
   }, [dispatch]);
 
   return (
-    <div className="fullWidthContainer">
+    <div className="wideContainer">
       <PageHeading
         buttonText="Назад"
         backLink={`/distributors/profile/${id}`}

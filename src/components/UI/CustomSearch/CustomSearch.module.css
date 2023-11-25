@@ -30,6 +30,12 @@
 .searchIcon {
   position: absolute;
   right: 15px;
+  z-index: 3;
+}
+
+.clearIcon {
+  position: absolute;
+  right: 15px;
   cursor: pointer;
   z-index: 3;
 }

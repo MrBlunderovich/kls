@@ -1,9 +1,16 @@
-//export const BASE_URL = "http://51.20.115.221/api/v1/";
 export const BASE_URL = "http://134.209.252.52:83/api/v1/";
+//export const BASE_URL = "https://beerhouse.vercel.app/api/";
 
 export const ENDPOINTS = {
   login: "/users/login/",
 };
+
+export const CATEGORIES = [
+  { value: "", label: "Все товары" },
+  { value: "Алкогольное", label: "Алкогольное" },
+  { value: "Безалкогольное", label: "Безалкогольное" },
+  { value: "Оборудование", label: "Оборудование" },
+];
 
 export const PATHS = {
   products: "/warehouse",
