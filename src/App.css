@@ -44,6 +44,12 @@
   margin-inline: auto;
 }
 
+.wideContainer {
+  max-width: calc(1440px + (2 * var(--container-padding)));
+  padding-inline: var(--container-padding);
+  margin-inline: auto;
+}
+
 .fullWidthContainer {
   padding-inline: var(--container-padding);
 }
