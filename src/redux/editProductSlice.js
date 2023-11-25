@@ -61,9 +61,6 @@ const productSlice = createSlice({
   name,
   initialState,
   reducers: {
-    /* setData: (state, action) => {
-      state.data = { ...state.data, ...action.payload };
-    }, */
     clearData: (state) => {
       state.data = null;
       state.error = null;

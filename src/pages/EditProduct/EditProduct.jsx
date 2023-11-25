@@ -86,11 +86,20 @@ export default function EditProduct() {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  function handleBarcodeChange(e) {
+    const { value } = e.target;
+    if (value.length > 13) {
+      return;
+    }
+    handleNumericInputChange(e);
+  }
+
   const handleNumericInputChange = (e) => {
     const { value } = e.target;
-    if (!isNaN(value) && !value.includes("e")) {
-      handleInputChange(e);
+    if (value.match(/[^0-9]/)) {
+      return;
     }
+    handleInputChange(e);
   };
 
   function clearAndGo() {
@@ -126,7 +135,7 @@ export default function EditProduct() {
                   type="text"
                   name="identification_number"
                   value={formData.identification_number}
-                  onChange={handleInputChange}
+                  onChange={handleBarcodeChange}
                 />
               </label>
             </fieldset>
