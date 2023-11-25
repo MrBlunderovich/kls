@@ -4,13 +4,8 @@ import { axiosPrivate } from "../api/axiosPrivate";
 export const getDistributorById = createAsyncThunk(
   "distributor/getDistributorById",
   async (id) => {
-    try {
-      const response = await axiosPrivate.get(`/distributors/${id}/`);
-      return response.data;
-    } catch (error) {
-      console.warn(error);
-      return error;
-    }
+    const response = await axiosPrivate.get(`/distributors/${id}/`);
+    return response.data;
   },
 );
 

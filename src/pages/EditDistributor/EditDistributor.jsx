@@ -46,9 +46,13 @@ export default function EditDistributor() {
 
   useEffect(() => {
     if (isEdit) {
-      dispatch(getDistributorById(id)).then((action) => {
-        setFormData(action.payload);
-      });
+      dispatch(getDistributorById(id))
+        .unwrap()
+        .then(setFormData)
+        .catch((err) => {
+          navigate("/not-found", { replace: true });
+        });
+      //.catch(err=>toast.error(err.message))
     }
   }, [id]);
 
