@@ -3,8 +3,10 @@ import { axiosPrivate } from "../api/axiosPrivate";
 import { axiosDummy } from "../api/axiosDummy";
 import yearLimiter from "../utils/yearLimiter";
 
+const name = "profile";
+
 export const getDistributorById = createAsyncThunk(
-  "profile/getDistributorById",
+  `${name}/getDistributorById`,
   async (distributorId, thunkAPI) => {
     try {
       const response = await axiosPrivate.get(`/distributors/${distributorId}`);
@@ -17,7 +19,7 @@ export const getDistributorById = createAsyncThunk(
 );
 
 export const fetchItems = createAsyncThunk(
-  "profile/fetchItems",
+  `${name}/fetchItems`,
   async ({ id, queryParams, target }, thunkAPI) => {
     try {
       const response = await axiosDummy.get(`/distributor/${target}/${id}`, {
@@ -47,7 +49,7 @@ const initialState = {
   error: null,
 };
 export const profileSlice = createSlice({
-  name: "profile",
+  name,
   initialState,
   reducers: {
     setCategory: (state, action) => {

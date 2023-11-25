@@ -1,23 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
-import { axiosDummy } from "../api/axiosDummy";
 
-/* export const fetchWarehouseItems = createAsyncThunk(
-  "warehouse/fetchWarehouseItems",
-  async (queryParams) => {
-    try {
-      const response = await axiosDummy.get(`/warehouse/?limit=10000`, {
-        params: queryParams,
-      });
-      return response.data.results;
-    } catch (error) {
-      console.warn(error);
-    }
-  },
-); */
+const name = "warehouse";
 
 export const fetchWarehouseItems = createAsyncThunk(
-  "warehouse/fetchWarehouseItems",
+  `${name}/fetchWarehouseItems`,
   async (queryParams) => {
     try {
       const response = await axiosPrivate.get(`/products/?limit=10000`, {
@@ -40,7 +27,7 @@ const initialState = {
 };
 
 export const warehouseSlice = createSlice({
-  name: "warehouse",
+  name,
   initialState,
   reducers: {
     setCategory: (state, action) => {

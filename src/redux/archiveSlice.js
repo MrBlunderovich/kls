@@ -1,8 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
 
+const name = "archive";
+
 export const fetchArchiveItems = createAsyncThunk(
-  "archive/fetchArchiveItems",
+  `${name}/fetchArchiveItems`,
   async (entity) => {
     try {
       const response = await axiosPrivate.get(
@@ -16,7 +18,7 @@ export const fetchArchiveItems = createAsyncThunk(
 );
 
 export const restoreItemById = createAsyncThunk(
-  "archive/restoreItemById",
+  `${name}/restoreItemById`,
   async ({ entity, id }) => {
     try {
       const response = await axiosPrivate.delete(`/${entity}/archive/${id}/`);
@@ -34,7 +36,7 @@ const initialState = {
 };
 
 export const archiveSlice = createSlice({
-  name: "archive",
+  name,
   initialState,
   reducers: {
     clearData: (state, action) => {
