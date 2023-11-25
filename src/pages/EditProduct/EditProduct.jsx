@@ -18,6 +18,7 @@ import {
   updateProductById,
 } from "../../redux/editProductSlice";
 import didFormDataChange from "../../utils/didFormDataChange";
+import useHandleError from "../../hooks/useHandleError";
 
 const initialData = {
   name: "",
@@ -40,13 +41,14 @@ export default function EditProduct() {
   const { id } = useParams();
   const isEdit = id !== undefined;
   const navigate = useNavigate();
+  const handleFetchError = useHandleError();
 
   useEffect(() => {
     if (isEdit) {
       dispatch(getProductById(id))
         .unwrap()
         .then(setFormData)
-        .catch((err) => console.log(err));
+        .catch(handleFetchError);
     }
   }, [id]);
 
