@@ -61,16 +61,19 @@ const productSlice = createSlice({
   name,
   initialState,
   reducers: {
-    clearData: (state) => {
-      state.data = null;
-      state.error = null;
-      state.isLoading = false;
+    clearData: () => {
+      return initialState;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getProductById.fulfilled, (state, action) => {
-      state.data = action.payload;
-    });
+    builder
+      .addCase(getProductById.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.data = action.payload;
+      });
   },
 });
 

@@ -34,7 +34,9 @@ export default function EditProduct() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const dispatch = useDispatch();
-  const productData = useSelector((state) => state.product.data);
+  const { data: productData, isLoading } = useSelector(
+    (state) => state.product,
+  );
   const { id } = useParams();
   const isEdit = id !== undefined;
   const navigate = useNavigate();
@@ -59,17 +61,16 @@ export default function EditProduct() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!didFormDataChange(productData, formData)) {
+      toast.warn("Ничего не измено");
+      return;
+    }
     setShowSaveModal(true);
   };
 
   const confirmSave = () => {
     setShowSaveModal(false);
     if (isEdit) {
-      if (!didFormDataChange(productData, formData)) {
-        toast.warn("Ничего не изменилось");
-        clearAndGo();
-        return;
-      }
       dispatch(updateProductById({ id, formData })).unwrap().then(clearAndGo);
       return;
     }
@@ -110,9 +111,10 @@ export default function EditProduct() {
   };
 
   function clearAndGo() {
-    dispatch(productActions.clearData());
     navigate(PATHS.products);
   }
+
+  const loadingPlaceholder = isLoading ? "Загрузка..." : null;
 
   return (
     <div className={styles.EditProduct}>
@@ -131,7 +133,7 @@ export default function EditProduct() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Пример: Пиво"
+                  placeholder={loadingPlaceholder || "Пример: Пиво"}
                 />
               </label>
               <label className={styles.formInput}>
@@ -141,6 +143,7 @@ export default function EditProduct() {
                   name="identification_number"
                   value={formData.identification_number}
                   onChange={handleBarcodeChange}
+                  placeholder={loadingPlaceholder || ""}
                 />
               </label>
             </fieldset>
@@ -170,7 +173,7 @@ export default function EditProduct() {
                   name="quantity"
                   value={formData.quantity}
                   onChange={handleNumericInputChange}
-                  placeholder="Пример: 1000"
+                  placeholder={loadingPlaceholder || "Пример: 1000"}
                   autoComplete="off"
                 />
               </label>
@@ -181,7 +184,7 @@ export default function EditProduct() {
                   name="price"
                   value={formData.price}
                   onChange={handleNumericInputChange}
-                  placeholder="0"
+                  placeholder={loadingPlaceholder || "0"}
                   autoComplete="off"
                 />
               </label>
