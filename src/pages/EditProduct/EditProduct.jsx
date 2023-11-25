@@ -2,6 +2,7 @@ import styles from "./EditProduct.module.css";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import FormContainer from "../../components/FormContainer/FormContainer";
 import CustomButton from "../../components/UI/CustomButton/CustomButton";
@@ -16,6 +17,7 @@ import {
   productActions,
   updateProductById,
 } from "../../redux/editProductSlice";
+import didFormDataChange from "../../utils/didFormDataChange";
 
 const initialData = {
   name: "",
@@ -63,6 +65,11 @@ export default function EditProduct() {
   const confirmSave = () => {
     setShowSaveModal(false);
     if (isEdit) {
+      if (!didFormDataChange(productData, formData)) {
+        toast.warn("Ничего не изменилось");
+        clearAndGo();
+        return;
+      }
       dispatch(updateProductById({ id, formData })).unwrap().then(clearAndGo);
       return;
     }
@@ -106,8 +113,6 @@ export default function EditProduct() {
     dispatch(productActions.clearData());
     navigate(PATHS.products);
   }
-
-  console.log(formData);
 
   return (
     <div className={styles.EditProduct}>
