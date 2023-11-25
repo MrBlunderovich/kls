@@ -52,7 +52,7 @@ export const archiveProductById = createAsyncThunk(
 );
 
 const initialState = {
-  data: null,
+  originalData: null,
   error: null,
   isLoading: false,
 };
@@ -72,7 +72,7 @@ const productSlice = createSlice({
       })
       .addCase(getProductById.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.data = action.payload;
+        state.originalData = action.payload;
       });
   },
 });

@@ -18,7 +18,7 @@ import {
   updateProductById,
 } from "../../redux/editProductSlice";
 import didFormDataChange from "../../utils/didFormDataChange";
-import useHandleError from "../../hooks/useHandleError";
+import showToastError from "../../utils/showToastError";
 
 const initialData = {
   name: "",
@@ -35,20 +35,17 @@ export default function EditProduct() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const dispatch = useDispatch();
-  const { data: productData, isLoading } = useSelector(
-    (state) => state.product,
-  );
+  const { originalData, isLoading } = useSelector((state) => state.product);
   const { id } = useParams();
   const isEdit = id !== undefined;
   const navigate = useNavigate();
-  const handleFetchError = useHandleError();
 
   useEffect(() => {
     if (isEdit) {
       dispatch(getProductById(id))
         .unwrap()
         .then(setFormData)
-        .catch(handleFetchError);
+        .catch(() => navigate(PATHS.notFound));
     }
   }, [id]);
 
@@ -58,12 +55,16 @@ export default function EditProduct() {
 
   const confirmDelete = () => {
     setShowDeleteModal(false);
-    dispatch(archiveProductById(id)).unwrap().then(clearAndGo);
+    dispatch(archiveProductById(id))
+      .unwrap()
+      .then(() => toast.success("Товар успешно удален"))
+      .then(() => navigate(PATHS.products))
+      .catch(showToastError);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!didFormDataChange(productData, formData)) {
+    if (!didFormDataChange(originalData, formData)) {
       toast.warn("Ничего не измено");
       return;
     }
@@ -73,10 +74,18 @@ export default function EditProduct() {
   const confirmSave = () => {
     setShowSaveModal(false);
     if (isEdit) {
-      dispatch(updateProductById({ id, formData })).unwrap().then(clearAndGo);
+      dispatch(updateProductById({ id, formData }))
+        .unwrap()
+        .then(() => toast.success("Товар успешно сохранен"))
+        .then(() => navigate(PATHS.products))
+        .catch(showToastError);
       return;
     }
-    dispatch(postProduct(formData)).unwrap().then(clearAndGo);
+    dispatch(postProduct(formData))
+      .unwrap()
+      .then(() => toast.success("Товар успешно создан"))
+      .then(() => navigate(PATHS.products))
+      .catch(showToastError);
   };
 
   const isFormValid = () => {
@@ -111,10 +120,6 @@ export default function EditProduct() {
     }
     handleInputChange(e);
   };
-
-  function clearAndGo() {
-    navigate(PATHS.products);
-  }
 
   const loadingPlaceholder = isLoading ? "Загрузка..." : null;
 
