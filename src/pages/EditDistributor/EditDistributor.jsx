@@ -46,13 +46,13 @@ export default function EditDistributor() {
 
   useEffect(() => {
     if (isEdit) {
-      dispatch(getDistributorById(id)).then((action) => {
-        console.log(action);
-        console.log(action.payload?.response?.status);
-        if (!action.payload?.response?.status) {
-          setFormData(action.payload);
-        }
-      });
+      dispatch(getDistributorById(id))
+        .unwrap()
+        .then(setFormData)
+        .catch((err) => {
+          navigate("/not-found", { replace: true });
+        });
+      //.catch(err=>toast.error(err.message))
     }
   }, [id]);
 
@@ -73,7 +73,6 @@ export default function EditDistributor() {
     ];
     return requiredFields.every((field) => !!formData[field]);
   }
-  console.log("---");
   const formIsValid = isFormValid();
 
   function handleInputChange(e) {
