@@ -9,7 +9,7 @@ import CustomButton from "../../components/UI/CustomButton/CustomButton";
 import CustomRadioButton from "../../components/UI/CustomRadioButton/CustomRadioButton";
 import CustomModal from "../../components/CustomModal/CustomModal";
 import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
-import { PATHS } from "../../common/constants";
+import { CATEGORIES, PATHS, UNITS } from "../../common/constants";
 import {
   archiveProductById,
   getProductById,
@@ -23,10 +23,10 @@ import showToastError from "../../utils/showToastError";
 const initialData = {
   name: "",
   identification_number: "",
-  unit: "",
+  unit: UNITS[0].value,
   quantity: "",
   price: "",
-  category: "",
+  category: CATEGORIES[0].value,
   state: "normal",
 };
 
@@ -64,7 +64,7 @@ export default function EditProduct() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!didFormDataChange(originalData, formData)) {
+    if (isEdit && !didFormDataChange(originalData, formData)) {
       toast.warn("Ничего не измено");
       return;
     }
@@ -88,18 +88,6 @@ export default function EditProduct() {
       .catch(showToastError);
   };
 
-  const isFormValid = () => {
-    const requiredFields = [
-      "name",
-      "identification_number",
-      "quantity",
-      "price",
-    ];
-    return requiredFields.every((field) => formData[field] !== "");
-  };
-
-  const sum = (formData.quantity * formData.price).toLocaleString("de-CH");
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -121,7 +109,13 @@ export default function EditProduct() {
     handleInputChange(e);
   };
 
+  const isFormValid = Object.values(formData).every((field) => field !== "");
+
+  const sum = (formData.quantity * formData.price).toLocaleString("de-CH");
+
   const loadingPlaceholder = isLoading ? "Загрузка..." : null;
+
+  console.log(formData);
 
   return (
     <div className={styles.EditProduct}>
@@ -163,11 +157,7 @@ export default function EditProduct() {
                   className={styles.unitSelect}
                   name="unit"
                   value={formData.unit}
-                  options={[
-                    { value: "item", label: "Шт" },
-                    { value: "kilogram", label: "Кг" },
-                    { value: "liter", label: "Литр" },
-                  ]}
+                  options={UNITS}
                   onChange={(value) =>
                     setFormData({ ...formData, unit: value })
                   }
@@ -209,11 +199,7 @@ export default function EditProduct() {
                   className={styles.categorySelect}
                   name="category"
                   value={formData.category}
-                  options={[
-                    { value: "Алкогольное", label: "Алкогольное" },
-                    { value: "Безалкогольное", label: "Безалкогольное" },
-                    { value: "Оборудование", label: "Оборудование" },
-                  ]}
+                  options={CATEGORIES}
                   onChange={(value) =>
                     setFormData({ ...formData, category: value })
                   }
@@ -256,11 +242,7 @@ export default function EditProduct() {
                   Удалить
                 </CustomButton>
               )}
-              <CustomButton
-                type="submit"
-                width="xwide"
-                disabled={!isFormValid()}
-              >
+              <CustomButton type="submit" width="xwide" disabled={!isFormValid}>
                 Сохранить
               </CustomButton>
             </div>

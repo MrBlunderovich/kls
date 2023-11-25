@@ -18,7 +18,6 @@ import { CATEGORIES, PATHS } from "../../common/constants";
 
 export default function Warehouse() {
   const { setCategory, setCondition, setSearch } = warehouseActions;
-  const { options } = useSelector((state) => state.options);
   const { items, isLoading, error, search, category, state } = useSelector(
     (state) => state.warehouse,
   );
@@ -107,7 +106,7 @@ export default function Warehouse() {
             name="category"
             value={category}
             onChange={(value) => dispatch(setCategory(value))}
-            options={CATEGORIES}
+            options={[{ value: "", label: "Все товары" }, ...CATEGORIES]}
           />
           <CustomSelect
             className={styles.conditionSelect}

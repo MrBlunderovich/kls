@@ -5,8 +5,13 @@ export const ENDPOINTS = {
   login: "/users/login/",
 };
 
+export const UNITS = [
+  { value: "item", label: "Шт" },
+  { value: "kilogram", label: "Кг" },
+  { value: "liter", label: "Литр" },
+];
+
 export const CATEGORIES = [
-  { value: "", label: "Все товары" },
   { value: "Алкогольное", label: "Алкогольное" },
   { value: "Безалкогольное", label: "Безалкогольное" },
   { value: "Оборудование", label: "Оборудование" },
