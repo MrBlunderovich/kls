@@ -3,28 +3,38 @@ import { axiosPrivate } from "../api/axiosPrivate";
 
 const name = "product";
 
+export const getProductById = createAsyncThunk(
+  `${name}/getProductById`,
+  async (id) => {
+    try {
+      const response = await axiosPrivate.get(`/products/${id}/`);
+      return response.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
+);
+
 export const postProduct = createAsyncThunk(
   `${name}/postProduct`,
-  async (_, thunkAPI) => {
+  async (formData) => {
     try {
-      const formData = thunkAPI.getState().product.data;
       const response = await axiosPrivate.post(`/products/`, formData);
       return response.data;
     } catch (error) {
-      console.warn(error);
+      return Promise.reject(error);
     }
   },
 );
 
 export const updateProductById = createAsyncThunk(
   `${name}/updateProductById`,
-  async (id, thunkAPI) => {
+  async ({ id, formData }) => {
     try {
-      const formData = thunkAPI.getState().product.data;
       const response = await axiosPrivate.put(`/products/${id}/`, formData);
       return response.data;
     } catch (error) {
-      console.warn(error);
+      return Promise.reject(error);
     }
   },
 );
@@ -36,46 +46,28 @@ export const archiveProductById = createAsyncThunk(
       const response = await axiosPrivate.delete(`/products/${id}/`);
       return response.data;
     } catch (error) {
-      console.warn(error);
+      return Promise.reject(error);
     }
   },
 );
-
-export const getProductById = createAsyncThunk(
-  `${name}/getProductById`,
-  async (id) => {
-    try {
-      const response = await axiosPrivate.get(`/products/${id}/`);
-      return response.data;
-    } catch (error) {
-      return error;
-    }
-  },
-);
-
-const defaultData = {
-  name: "",
-  identification_number: "",
-  quantity: "",
-  price: "",
-  unit: "liter",
-  category: "alcohol",
-  state: "normal",
-};
 
 const initialState = {
-  data: defaultData,
+  data: null,
+  error: null,
+  isLoading: false,
 };
 
 const productSlice = createSlice({
   name,
   initialState,
   reducers: {
-    setData: (state, action) => {
+    /* setData: (state, action) => {
       state.data = { ...state.data, ...action.payload };
-    },
+    }, */
     clearData: (state) => {
-      state.data = defaultData;
+      state.data = null;
+      state.error = null;
+      state.isLoading = false;
     },
   },
   extraReducers: (builder) => {

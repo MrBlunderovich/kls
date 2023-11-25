@@ -8,6 +8,7 @@ import CustomButton from "../../components/UI/CustomButton/CustomButton";
 import CustomRadioButton from "../../components/UI/CustomRadioButton/CustomRadioButton";
 import CustomModal from "../../components/CustomModal/CustomModal";
 import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
+import { PATHS } from "../../common/constants";
 import {
   archiveProductById,
   getProductById,
@@ -15,40 +16,43 @@ import {
   productActions,
   updateProductById,
 } from "../../redux/editProductSlice";
-import { PATHS } from "../../common/constants";
-import handleError from "../../utils/handleError";
+
+const initialData = {
+  name: "",
+  identification_number: "",
+  unit: "",
+  quantity: "",
+  price: "",
+  category: "",
+  state: "normal",
+};
 
 export default function EditProduct() {
+  const [formData, setFormData] = useState(initialData);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const dispatch = useDispatch();
   const productData = useSelector((state) => state.product.data);
-  const { setData, clearData } = productActions;
-  const [formData, setFormData] = useState({
-    name: "",
-    identification_number: "",
-    unit: "",
-    quantity: "",
-    price: "",
-    category: "",
-    state: "Normal",
-  });
   const { id } = useParams();
   const isEdit = id !== undefined;
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isEdit) {
-      dispatch(getProductById(id)).then(handleError);
+      dispatch(getProductById(id))
+        .unwrap()
+        .then(setFormData)
+        .catch((err) => console.log(err));
     }
   }, [id]);
 
+  useEffect(() => {
+    return () => dispatch(productActions.clearData());
+  }, []);
+
   const confirmDelete = () => {
     setShowDeleteModal(false);
-    dispatch(archiveProductById(id)).then(() => {
-      dispatch(clearData());
-      navigate(PATHS.products);
-    });
+    dispatch(archiveProductById(id)).unwrap().then(clearAndGo);
   };
 
   const handleSubmit = (e) => {
@@ -59,16 +63,10 @@ export default function EditProduct() {
   const confirmSave = () => {
     setShowSaveModal(false);
     if (isEdit) {
-      dispatch(updateProductById(id)).then(() => {
-        dispatch(clearData());
-        navigate(PATHS.products);
-      });
+      dispatch(updateProductById({ id, formData })).unwrap().then(clearAndGo);
       return;
     }
-    dispatch(postProduct()).then(() => {
-      dispatch(clearData());
-      navigate(PATHS.products);
-    });
+    dispatch(postProduct(formData)).unwrap().then(clearAndGo);
   };
 
   const isFormValid = () => {
@@ -94,7 +92,14 @@ export default function EditProduct() {
       handleInputChange(e);
     }
   };
+
+  function clearAndGo() {
+    dispatch(productActions.clearData());
+    navigate(PATHS.products);
+  }
+
   console.log(formData);
+
   return (
     <div className={styles.EditProduct}>
       <div className="narrowContainer">
@@ -139,7 +144,9 @@ export default function EditProduct() {
                     { value: "kilogram", label: "Кг" },
                     { value: "liter", label: "Литр" },
                   ]}
-                  onChange={(value) => dispatch(setData({ unit: value }))}
+                  onChange={(value) =>
+                    setFormData({ ...formData, unit: value })
+                  }
                 />
               </label>
               <label className={styles.formInput}>
