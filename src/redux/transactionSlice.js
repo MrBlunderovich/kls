@@ -52,7 +52,7 @@ export const transactionSlice = createSlice({
     setSearch: (state, action) => {
       state.search = action.payload;
     },
-    updateSource: (state, action) => {
+    updateSource: (state) => {
       const target = state.target;
       const source = state.source;
       let anyMatches = false;
