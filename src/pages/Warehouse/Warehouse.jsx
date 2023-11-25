@@ -38,7 +38,8 @@ export default function Warehouse() {
       dataIndex: "rowIndex",
       key: "rowIndex",
       align: "center",
-      width: 55,
+      width: 70,
+      ellipsis: true,
       render: renderIndex,
     },
     {
