@@ -1,7 +1,7 @@
 import styles from "./EditProduct.module.css";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import FormContainer from "../../components/FormContainer/FormContainer";
@@ -39,7 +39,6 @@ export default function EditProduct() {
   const { originalData, isLoading } = useSelector((state) => state.product);
   const { id } = useParams();
   const isEdit = id !== undefined;
-  const navigate = useNavigate();
   const navigate404 = useNavigateReplace();
   const navigateToWarehouse = useNavigateReplace(PATHS.products, false);
 
@@ -56,25 +55,16 @@ export default function EditProduct() {
     return () => dispatch(productActions.clearData());
   }, []);
 
-  const confirmDelete = () => {
-    setShowDeleteModal(false);
-    dispatch(archiveProductById(id))
-      .unwrap()
-      .then(() => toast.success("Товар успешно удален"))
-      .then(navigateToWarehouse)
-      .catch(showToastError);
-  };
-
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
     if (isEdit && !didFormDataChange(originalData, formData)) {
       toast.warn("Ничего не измено");
       return;
     }
     setShowSaveModal(true);
-  };
+  }
 
-  const confirmSave = () => {
+  function handleConfirmSave() {
     setShowSaveModal(false);
     if (isEdit) {
       dispatch(updateProductById({ id, formData }))
@@ -89,12 +79,21 @@ export default function EditProduct() {
       .then(() => toast.success("Товар успешно создан"))
       .then(navigateToWarehouse)
       .catch(showToastError);
-  };
+  }
 
-  const handleInputChange = (e) => {
+  function handleConfirmDelete() {
+    setShowDeleteModal(false);
+    dispatch(archiveProductById(id))
+      .unwrap()
+      .then(() => toast.success("Товар успешно удален"))
+      .then(navigateToWarehouse)
+      .catch(showToastError);
+  }
+
+  function handleInputChange(e) {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
+  }
 
   function handleBarcodeChange(e) {
     const { value } = e.target;
@@ -104,21 +103,19 @@ export default function EditProduct() {
     handleNumericInputChange(e);
   }
 
-  const handleNumericInputChange = (e) => {
+  function handleNumericInputChange(e) {
     const { value } = e.target;
     if (value.match(/[^0-9]/)) {
       return;
     }
     handleInputChange(e);
-  };
+  }
 
   const isFormValid = Object.values(formData).every((field) => field !== "");
 
   const sum = (formData.quantity * formData.price).toLocaleString("de-CH");
 
   const loadingPlaceholder = isLoading ? "Загрузка..." : null;
-
-  console.log(formData);
 
   return (
     <div className={styles.EditProduct}>
@@ -255,7 +252,7 @@ export default function EditProduct() {
       {showSaveModal && (
         <CustomModal
           message="Вы точно хотите сохранить?"
-          primaryAction={confirmSave}
+          primaryAction={handleConfirmSave}
           secondaryAction={() => {
             setShowSaveModal(false);
           }}
@@ -264,7 +261,7 @@ export default function EditProduct() {
       {showDeleteModal && (
         <CustomModal
           message="Вы точно хотите удалить?"
-          primaryAction={confirmDelete}
+          primaryAction={handleConfirmDelete}
           secondaryAction={() => {
             setShowDeleteModal(false);
           }}
