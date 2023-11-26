@@ -134,6 +134,7 @@ export default function EditProduct() {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder={loadingPlaceholder || "Пример: Пиво"}
+                  required
                 />
               </label>
               <label className={styles.formInput}>
@@ -144,6 +145,7 @@ export default function EditProduct() {
                   value={formData.identification_number}
                   onChange={handleBarcodeChange}
                   placeholder={loadingPlaceholder || ""}
+                  required
                 />
               </label>
             </fieldset>
@@ -171,6 +173,7 @@ export default function EditProduct() {
                   onChange={handleNumericInputChange}
                   placeholder={loadingPlaceholder || "Пример: 1000"}
                   autoComplete="off"
+                  required
                 />
               </label>
               <label className={styles.formInput}>
@@ -182,6 +185,7 @@ export default function EditProduct() {
                   onChange={handleNumericInputChange}
                   placeholder={loadingPlaceholder || "0"}
                   autoComplete="off"
+                  required
                 />
               </label>
               <label className={styles.formInput}>
