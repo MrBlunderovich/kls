@@ -6,8 +6,12 @@ const name = "distributor";
 export const getDistributorById = createAsyncThunk(
   `${name}/getDistributorById`,
   async (id) => {
-    const response = await axiosPrivate.get(`/distributors/${id}/`);
-    return response.data;
+    try {
+      const response = await axiosPrivate.get(`/distributors/${id}/`);
+      return response.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
   },
 );
 
@@ -18,8 +22,7 @@ export const createDistributor = createAsyncThunk(
       const response = await axiosPrivate.post(`/distributors/`, formData);
       return response.data;
     } catch (error) {
-      console.warn(error);
-      return error;
+      return Promise.reject(error.request?.responseText || error);
     }
   },
 );
@@ -31,8 +34,7 @@ export const editDistributorById = createAsyncThunk(
       const response = await axiosPrivate.put(`/distributors/${id}/`, formData);
       return response.data;
     } catch (error) {
-      console.warn(error);
-      return error;
+      return Promise.reject(error.request?.responseText || error);
     }
   },
 );
@@ -44,13 +46,13 @@ export const archiveDistributorById = createAsyncThunk(
       const response = await axiosPrivate.delete(`/distributors/${id}/`);
       return response.data;
     } catch (error) {
-      console.warn(error);
-      return error;
+      return Promise.reject(error);
     }
   },
 );
 
 const initialState = {
+  originalData: null,
   error: null,
   isLoading: false,
 };
@@ -58,15 +60,20 @@ const initialState = {
 export const distributorSlice = createSlice({
   name,
   initialState,
-  reducers: {},
+  reducers: {
+    clearData: () => {
+      return initialState;
+    },
+  },
   extraReducers: (builder) => {
-    builder.addCase(getDistributorById.pending, (state, action) => {
+    builder.addCase(getDistributorById.pending, (state) => {
       state.error = null;
       state.isLoading = true;
     });
     builder.addCase(getDistributorById.fulfilled, (state, action) => {
       state.isLoading = false;
       state.error = null;
+      state.originalData = action.payload;
     });
     builder.addCase(getDistributorById.rejected, (state, action) => {
       state.isLoading = false;

@@ -1,46 +1,52 @@
 import styles from "./EditDistributor.module.css";
-import { useDispatch } from "react-redux";
-import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import FormContainer from "../../components/FormContainer/FormContainer";
 import CustomButton from "../../components/UI/CustomButton/CustomButton";
-import getApp from "../../assets/icons/get_app.svg";
+import arrowDown from "../../assets/icons/get_app.svg";
 import CustomModal from "../../components/CustomModal/CustomModal";
 import {
   archiveDistributorById,
   createDistributor,
+  distributorActions,
   editDistributorById,
   getDistributorById,
 } from "../../redux/editDistributorSlice";
 import { PATHS } from "../../common/constants";
 import yearLimiter from "../../utils/yearLimiter";
+import useNavigateReplace from "../../hooks/useNavigateReplace";
+import useEditId from "../../hooks/useEditId";
+import didFormDataChange from "../../utils/didFormDataChange";
+import showToastError from "../../utils/showToastError";
+
+const initialData = {
+  photo: null,
+  name: "",
+  region: "",
+  inn: "",
+  address: "",
+  actual_place_of_residence: "",
+  passport_series: "",
+  passport_id: "",
+  issued_by: "",
+  issue_date: "",
+  validity: "",
+  contact: null,
+  contact2: null,
+};
 
 export default function EditDistributor() {
-  const [formData, setFormData] = useState({
-    photo: null,
-    name: "",
-    region: "",
-    inn: "",
-    address: "",
-    actual_place_of_residence: "",
-    passport_series: "",
-    passport_id: "",
-    issued_by: "",
-    issue_date: "",
-    validity: "",
-    contact: null,
-    contact2: null,
-  });
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { id } = useParams();
-  const formRef = useRef(null);
+  const [formData, setFormData] = useState(initialData);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const { pathname } = useLocation();
-  const isEdit = id !== undefined;
-  //TODO: if pathname includes 'edit', must have an id
+  const dispatch = useDispatch();
+  const { originalData, isLoading } = useSelector((state) => state.distributor);
+  const { id, isEdit } = useEditId();
+  const navigate404 = useNavigateReplace();
+  const navigateToDistributors = useNavigateReplace(PATHS.distributors, false);
+
   const passport =
     formData.passport_series.toString() + formData.passport_id.toString();
 
@@ -49,12 +55,50 @@ export default function EditDistributor() {
       dispatch(getDistributorById(id))
         .unwrap()
         .then(setFormData)
-        .catch((err) => {
-          navigate("/not-found", { replace: true });
-        });
-      //.catch(err=>toast.error(err.message))
+        .catch(navigate404);
     }
   }, [id]);
+
+  useEffect(() => {
+    return () => dispatch(distributorActions.clearData());
+  }, []);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    if (isEdit && !didFormDataChange(originalData, formData)) {
+      toast.warn("Ничего не измено");
+      return;
+    }
+    setShowSaveModal(true);
+  }
+
+  function handleConfirmSave() {
+    setShowSaveModal(false);
+    if (isEdit) {
+      dispatch(
+        editDistributorById({ id, formData: createFormDataObject(formData) }),
+      )
+        .unwrap()
+        .then(() => toast.success("Дистрибьютор успешно сохранен"))
+        .then(navigateToDistributors)
+        .catch(showToastError);
+      return;
+    }
+    dispatch(createDistributor(createFormDataObject(formData)))
+      .unwrap()
+      .then(() => toast.success("Дистрибьютор успешно создан"))
+      .then(navigateToDistributors)
+      .catch(showToastError);
+  }
+
+  function handleConfirmDelete() {
+    setShowDeleteModal(false);
+    dispatch(archiveDistributorById(id))
+      .unwrap()
+      .then(() => toast.success("Дистрибьютор успешно удален"))
+      .then(navigateToDistributors)
+      .catch(showToastError);
+  }
 
   //временная "валидация"
   function isFormValid() {
@@ -112,11 +156,6 @@ export default function EditDistributor() {
     setFormData({ ...formData, photo });
   };
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    setShowSaveModal(true);
-  }
-
   function createFormDataObject(data) {
     const dataWithPhoto = { ...data };
     if (typeof data.photo === "string") {
@@ -129,36 +168,13 @@ export default function EditDistributor() {
     return formDataObject;
   }
 
-  function handleConfirmSave() {
-    if (isEdit) {
-      dispatch(
-        editDistributorById({ id, formData: createFormDataObject(formData) }),
-      ).then((action) => {
-        setShowSaveModal(false);
-        navigate(PATHS.distributors);
-      });
-      return;
-    }
-    dispatch(createDistributor(createFormDataObject(formData))).then(
-      (action) => {
-        setShowSaveModal(false);
-        navigate(PATHS.distributors);
-      },
-    );
-  }
-
-  function handleConfirmDelete() {
-    dispatch(archiveDistributorById(id)).then((action) => {
-      setShowDeleteModal(false);
-      navigate(PATHS.distributors);
-    });
-  }
-
   function getPhotoUrl() {
     if (!formData.photo) return null;
     if (typeof formData.photo === "string") return formData.photo;
     return URL.createObjectURL(formData.photo);
   }
+
+  const loadingPlaceholder = isLoading ? "Загрузка..." : null;
 
   return (
     <>
@@ -171,7 +187,7 @@ export default function EditDistributor() {
             modalOnLeave={true}
           />
           <FormContainer>
-            <form className={styles.form} ref={formRef} onSubmit={handleSubmit}>
+            <form className={styles.form} onSubmit={handleSubmit}>
               <label className={styles.fileInput}>
                 <input
                   type="file"
@@ -186,7 +202,7 @@ export default function EditDistributor() {
                   />
                 ) : (
                   <div className={styles.getPhoto}>
-                    <img src={getApp} alt="icon" />
+                    <img src={arrowDown} alt="icon" />
                     <span>Добавить</span>
                     <span>фотографию</span>
                   </div>
@@ -201,7 +217,9 @@ export default function EditDistributor() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="Пример: Иванов Иван Иванович"
+                    placeholder={
+                      loadingPlaceholder || "Пример: Иванов Иван Иванович"
+                    }
                     required
                   />
                 </label>
@@ -212,7 +230,10 @@ export default function EditDistributor() {
                     name="actual_place_of_residence"
                     value={formData.actual_place_of_residence}
                     onChange={handleInputChange}
-                    placeholder="Пример: обл. Чуй, рай. Сокулук, с. Село, "
+                    placeholder={
+                      loadingPlaceholder ||
+                      "Пример: обл. Чуй, рай. Сокулук, с. Село, "
+                    }
                     required
                   />
                 </label>
@@ -224,7 +245,10 @@ export default function EditDistributor() {
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    placeholder="Пример: обл. Чуй, рай. Сокулук, с. Село, "
+                    placeholder={
+                      loadingPlaceholder ||
+                      "Пример: обл. Чуй, рай. Сокулук, с. Село, "
+                    }
                     required
                   />
                 </label>
@@ -235,7 +259,7 @@ export default function EditDistributor() {
                     name="region"
                     value={formData.region}
                     onChange={handleInputChange}
-                    placeholder="Пример: Чуй"
+                    placeholder={loadingPlaceholder || "Пример: Чуй"}
                     required
                   />
                 </label>
@@ -246,7 +270,7 @@ export default function EditDistributor() {
                     name="passport"
                     value={passport}
                     onChange={handlePassportChange}
-                    placeholder="ID"
+                    placeholder={loadingPlaceholder || "ID"}
                     required
                   />
                 </label>
@@ -258,7 +282,7 @@ export default function EditDistributor() {
                     name="inn"
                     value={formData.inn}
                     onChange={handleInputChange}
-                    placeholder="0000000000"
+                    placeholder={loadingPlaceholder || "0000000000"}
                     required
                   />
                 </label>
@@ -269,7 +293,7 @@ export default function EditDistributor() {
                     name="issued_by"
                     value={formData.issued_by}
                     onChange={handleInputChange}
-                    placeholder="МКК"
+                    placeholder={loadingPlaceholder || "МКК"}
                     required
                   />
                 </label>
@@ -304,7 +328,7 @@ export default function EditDistributor() {
                         name="contact"
                         value={formData.contact || ""}
                         onChange={handleNumberChange}
-                        placeholder=""
+                        placeholder={loadingPlaceholder || ""}
                         required
                       />
                     </div>
@@ -323,7 +347,7 @@ export default function EditDistributor() {
                         name="contact2"
                         value={formData.contact2 || ""}
                         onChange={handleNumberChange}
-                        placeholder=""
+                        placeholder={loadingPlaceholder || ""}
                       />
                     </div>
                   </label>
