@@ -149,9 +149,7 @@ export default function EditDistributor() {
 
   function handlePhoneChange(e) {
     const { name, value } = e.target;
-    console.log(value);
     const dryValue = value.replaceAll(" ", "");
-    console.log(dryValue);
     if (dryValue.match(/[^0-9]/)) {
       toast.warn("Телефон: только цифры", { toastId: "digits" });
       return;
