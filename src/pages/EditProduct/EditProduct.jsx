@@ -19,6 +19,7 @@ import {
 } from "../../redux/editProductSlice";
 import didFormDataChange from "../../utils/didFormDataChange";
 import showToastError from "../../utils/showToastError";
+import useNavigateReplace from "../../hooks/useNavigateReplace";
 
 const initialData = {
   name: "",
@@ -39,13 +40,15 @@ export default function EditProduct() {
   const { id } = useParams();
   const isEdit = id !== undefined;
   const navigate = useNavigate();
+  const navigate404 = useNavigateReplace();
+  const navigateToWarehouse = useNavigateReplace(PATHS.products, false);
 
   useEffect(() => {
     if (isEdit) {
       dispatch(getProductById(id))
         .unwrap()
         .then(setFormData)
-        .catch(() => navigate(PATHS.notFound));
+        .catch(navigate404);
     }
   }, [id]);
 
@@ -58,7 +61,7 @@ export default function EditProduct() {
     dispatch(archiveProductById(id))
       .unwrap()
       .then(() => toast.success("Товар успешно удален"))
-      .then(() => navigate(PATHS.products))
+      .then(navigateToWarehouse)
       .catch(showToastError);
   };
 
@@ -77,14 +80,14 @@ export default function EditProduct() {
       dispatch(updateProductById({ id, formData }))
         .unwrap()
         .then(() => toast.success("Товар успешно сохранен"))
-        .then(() => navigate(PATHS.products))
+        .then(navigateToWarehouse)
         .catch(showToastError);
       return;
     }
     dispatch(postProduct(formData))
       .unwrap()
       .then(() => toast.success("Товар успешно создан"))
-      .then(() => navigate(PATHS.products))
+      .then(navigateToWarehouse)
       .catch(showToastError);
   };
 
