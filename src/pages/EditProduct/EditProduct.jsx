@@ -1,7 +1,6 @@
 import styles from "./EditProduct.module.css";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import FormContainer from "../../components/FormContainer/FormContainer";
@@ -20,6 +19,7 @@ import {
 import didFormDataChange from "../../utils/didFormDataChange";
 import showToastError from "../../utils/showToastError";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
+import useEditId from "../../hooks/useEditId";
 
 const initialData = {
   name: "",
@@ -37,8 +37,7 @@ export default function EditProduct() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const dispatch = useDispatch();
   const { originalData, isLoading } = useSelector((state) => state.product);
-  const { id } = useParams();
-  const isEdit = id !== undefined;
+  const { id, isEdit } = useEditId();
   const navigate404 = useNavigateReplace();
   const navigateToWarehouse = useNavigateReplace(PATHS.products, false);
 
