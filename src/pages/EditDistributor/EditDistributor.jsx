@@ -1,6 +1,6 @@
 import styles from "./EditDistributor.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import FormContainer from "../../components/FormContainer/FormContainer";
@@ -41,6 +41,7 @@ export default function EditDistributor() {
   const [formData, setFormData] = useState(initialData);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const formRef = useRef(null);
   const dispatch = useDispatch();
   const { originalData, isLoading } = useSelector((state) => state.distributor);
   const { id, isEdit } = useEditId();
@@ -101,7 +102,7 @@ export default function EditDistributor() {
   }
 
   //временная "валидация"
-  function isFormValid() {
+  /* function isFormValid() {
     const requiredFields = [
       "name",
       "region",
@@ -116,13 +117,37 @@ export default function EditDistributor() {
       "contact",
     ];
     return requiredFields.every((field) => !!formData[field]);
-  }
+  } */
 
-  const formIsValid = isFormValid();
+  //const formIsValid = isFormValid();
+
+  const formInputs = Array.from(formRef.current.elements).filter(
+    (element) => element.name,
+  );
+  formInputs.forEach((input) => {
+    console.log(input.name, input.validity.valid);
+  });
+  const formIsValid = !!Array.from(formRef.current.elements).reduce(
+    (acc, item) => acc * item.validity.valid,
+    true,
+  );
 
   function handleInputChange(e) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  }
+
+  function handleINNChange(e) {
+    const { value } = e.target;
+    if (value.match(/[^0-9]/)) {
+      toast.warn("ИНН: только цифры", { toastId: "digits" });
+      return;
+    }
+    if (value.length > 14) {
+      toast.warn("ИНН: 14 символов", { toastId: "length" });
+      return;
+    }
+    handleInputChange(e);
   }
 
   function handleNumberChange(e) {
@@ -136,7 +161,25 @@ export default function EditDistributor() {
   }
 
   function handlePassportChange(event) {
-    const valueArray = event.target.value.split("");
+    const upperCaseValue = event.target.value.toUpperCase().trim();
+    if (upperCaseValue.match(/[^A-Z0-9]/)) {
+      toast.warn("ID: неподходящие символы", { toastId: "chars" });
+      return;
+    }
+    if (upperCaseValue.match(/^[^A-Z]|^.[^A-Z]/)) {
+      toast.warn("ID: два первых символа - буквы", { toastId: "letters" });
+      return;
+    }
+    if (upperCaseValue.match(/^..[^0-9]{1,7}/)) {
+      toast.warn("ID: третий символ и дальше - цифры", { toastId: "numbers" });
+      return;
+    }
+    if (upperCaseValue.length > 9) {
+      toast.warn("ID: всего 9 символов", { toastId: "length" });
+      return;
+    }
+    //временный костыль, пока не исправят бэк:
+    const valueArray = upperCaseValue.split("");
     const passportSeriesArray = [];
     const passportNumberArray = [];
     valueArray.forEach((char, index) => {
@@ -187,11 +230,12 @@ export default function EditDistributor() {
             modalOnLeave={true}
           />
           <FormContainer>
-            <form className={styles.form} onSubmit={handleSubmit}>
+            <form className={styles.form} ref={formRef} onSubmit={handleSubmit}>
               <label className={styles.fileInput}>
                 <input
                   type="file"
                   accept="image/*"
+                  name="photo"
                   onChange={handlePhotoChange}
                 />
                 {formData.photo ? (
@@ -272,6 +316,8 @@ export default function EditDistributor() {
                     onChange={handlePassportChange}
                     placeholder={loadingPlaceholder || "ID"}
                     required
+                    minLength={9}
+                    maxLength={9}
                   />
                 </label>
 
@@ -281,9 +327,11 @@ export default function EditDistributor() {
                     type="text"
                     name="inn"
                     value={formData.inn}
-                    onChange={handleInputChange}
+                    onChange={handleINNChange}
                     placeholder={loadingPlaceholder || "0000000000"}
                     required
+                    minLength={14}
+                    maxLength={14}
                   />
                 </label>
                 <label className={`formLabel ${styles.single}`}>
@@ -330,6 +378,8 @@ export default function EditDistributor() {
                         onChange={handleNumberChange}
                         placeholder={loadingPlaceholder || ""}
                         required
+                        minLength={9}
+                        maxLength={9}
                       />
                     </div>
                   </label>
@@ -348,6 +398,8 @@ export default function EditDistributor() {
                         value={formData.contact2 || ""}
                         onChange={handleNumberChange}
                         placeholder={loadingPlaceholder || ""}
+                        minLength={9}
+                        maxLength={9}
                       />
                     </div>
                   </label>
