@@ -29,6 +29,8 @@ export default function Order({
   orderNumber,
   hoverRowId,
   loading,
+  onSave,
+  onPrint,
 }) {
   const dispatch = useDispatch();
 
@@ -227,6 +229,7 @@ export default function Order({
             className={parentStyles.orderButton}
             width="narrow"
             variant="secondary"
+            onClick={onPrint}
           >
             Распечатать
           </CustomButton>
@@ -234,6 +237,7 @@ export default function Order({
             className={parentStyles.orderButton}
             width="narrow"
             variant="primary"
+            onClick={onSave}
           >
             Сохранить
           </CustomButton>

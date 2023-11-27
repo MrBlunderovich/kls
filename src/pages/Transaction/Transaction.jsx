@@ -70,6 +70,14 @@ export default function Transaction() {
     };
   }, [dispatch]);
 
+  function handleSave() {
+    console.log(target);
+  }
+
+  function handlePrint() {
+    console.log(target);
+  }
+
   return (
     <div className="wideContainer">
       <PageHeading
@@ -92,6 +100,8 @@ export default function Transaction() {
             targetTotalCost={targetTotalCost}
             hoverRowId={hoverRowId}
             loading={isLoading}
+            onSave={handleSave}
+            onPrint={handlePrint}
           />
         ) : (
           <Order
@@ -103,6 +113,8 @@ export default function Transaction() {
             targetTotalCost={targetTotalCost}
             hoverRowId={hoverRowId}
             loading={isLoading}
+            onSave={handleSave}
+            onPrint={handlePrint}
           />
         )}
       </main>
