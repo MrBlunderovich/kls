@@ -32,6 +32,7 @@ export default function Order({
   loading,
   onSave,
   onPrint,
+  invoiceNumber,
 }) {
   const dispatch = useDispatch();
 
@@ -233,6 +234,7 @@ export default function Order({
             width="narrow"
             variant="secondary"
             onClick={onPrint}
+            disabled={!invoiceNumber}
           >
             Распечатать
           </CustomButton>
@@ -241,6 +243,7 @@ export default function Order({
             width="narrow"
             variant="primary"
             onClick={onSave}
+            disabled={!(orderNumber && targetData.length > 0)}
           >
             Сохранить
           </CustomButton>

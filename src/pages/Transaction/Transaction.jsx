@@ -8,6 +8,8 @@ import {
   getOrdersById,
   transactionActions,
   getWarehouseItems,
+  postOrderById,
+  printOrderById,
 } from "../../redux/transactionSlice";
 import Order from "./Order/Order";
 import Return from "./Return/Return";
@@ -28,6 +30,7 @@ export default function Transaction() {
     hoverRowId,
     orderNumber,
     isLoading,
+    invoiceNumber,
   } = useSelector((state) => state.transaction);
   const dispatch = useDispatch();
 
@@ -71,11 +74,33 @@ export default function Transaction() {
   }, [dispatch]);
 
   function handleSave() {
-    console.log(target);
+    if (isReturn) {
+      const payload = {
+        distributor: id,
+        identification_number_invoice: orderNumber,
+        products_invoice: target,
+      };
+      dispatch(postReturnById(payload));
+      return;
+    }
+    const payload = {
+      distributor: id,
+      identification_number_invoice: orderNumber,
+      products_invoice: target.map((item) => ({
+        product_id: item.id,
+        quantity: item.quantity,
+      })),
+    };
+    dispatch(postOrderById(payload)).unwrap().catch(showToastError);
   }
 
   function handlePrint() {
-    console.log(target);
+    if (isReturn) {
+      dispatch(printOrderById(invoiceNumber));
+      return;
+    }
+    dispatch(printOrderById(invoiceNumber));
+    return;
   }
 
   return (
@@ -115,6 +140,7 @@ export default function Transaction() {
             loading={isLoading}
             onSave={handleSave}
             onPrint={handlePrint}
+            invoiceNumber={invoiceNumber}
           />
         )}
       </main>

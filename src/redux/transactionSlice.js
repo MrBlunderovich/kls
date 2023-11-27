@@ -45,6 +45,34 @@ export const getOrdersById = createAsyncThunk(
     }
   },
 );
+
+export const postOrderById = createAsyncThunk(
+  `${name}/postOrderById`,
+  async (data) => {
+    try {
+      const response = await axiosPrivate.post(`/transactions/invoices/`, data);
+      return response.data;
+    } catch (error) {
+      console.warn(error);
+      return Promise.reject(error);
+    }
+  },
+);
+
+export const printOrderById = createAsyncThunk(
+  `${name}/postOrderById`,
+  async (id) => {
+    try {
+      const response = await axiosPrivate.get(
+        `/transactions/generate_pdf/${id}/`,
+      );
+      return response.data;
+    } catch (error) {
+      console.warn(error);
+      return Promise.reject(error);
+    }
+  },
+);
 /* 
 export const getOrdersById = createAsyncThunk(
   `${name}/getOrdersById`,
@@ -63,6 +91,7 @@ export const getOrdersById = createAsyncThunk(
 
 const initialState = {
   isLoading: false,
+  invoiceNumber: null,
   search: "",
   orderNumber: "",
   distributor: {
@@ -182,6 +211,10 @@ export const transactionSlice = createSlice({
       .addCase(getWarehouseItems.fulfilled, (state, action) => {
         state.isLoading = false;
         state.source = action.payload;
+      })
+      .addCase(postOrderById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.invoiceNumber = action.payload.id;
       });
   },
 });
