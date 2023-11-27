@@ -29,8 +29,7 @@ const initialData = {
   inn: "",
   address: "",
   actual_place_of_residence: "",
-  passport_series: "",
-  passport_id: "",
+  passport_series_number: "",
   issued_by: "",
   issue_date: "",
   validity: "",
@@ -48,9 +47,6 @@ export default function EditDistributor() {
   const { id, isEdit } = useEditId();
   const navigate404 = useNavigateReplace();
   const navigateToDistributors = useNavigateReplace(PATHS.distributors, false);
-
-  const passport =
-    formData.passport_series.toString() + formData.passport_id.toString();
 
   useEffect(() => {
     if (isEdit) {
@@ -109,8 +105,7 @@ export default function EditDistributor() {
       "inn",
       "address",
       "actual_place_of_residence",
-      "passport_id",
-      "passport_series",
+      "passport_series_number",
       "issued_by",
       "issue_date",
       "validity",
@@ -180,20 +175,8 @@ export default function EditDistributor() {
       toast.warn("ID: всего 9 символов", { toastId: "length" });
       return;
     }
-    //временный костыль, пока не исправят бэк:
-    const valueArray = upperCaseValue.split("");
-    const passportSeriesArray = [];
-    const passportNumberArray = [];
-    valueArray.forEach((char, index) => {
-      if (index <= 1) {
-        passportSeriesArray.push(char);
-        return;
-      }
-      passportNumberArray.push(char);
-    });
-    const passport_series = passportSeriesArray.join("");
-    const passport_id = passportNumberArray.join("");
-    setFormData({ ...formData, passport_series, passport_id });
+
+    setFormData({ ...formData, passport_series_number: upperCaseValue });
   }
 
   const handlePhotoChange = (e) => {
@@ -314,7 +297,7 @@ export default function EditDistributor() {
                   <input
                     type="text"
                     name="passport"
-                    value={passport}
+                    value={formData.passport_series_number}
                     onChange={handlePassportChange}
                     placeholder={loadingPlaceholder || "ID"}
                     required

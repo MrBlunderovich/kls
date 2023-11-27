@@ -10,7 +10,7 @@ export const fetchArchiveItems = createAsyncThunk(
       const response = await axiosPrivate.get(
         `/${entity}/archive/?limit=10000`,
       );
-      return response.data.results;
+      return response.data;
     } catch (error) {
       console.warn(error);
     }

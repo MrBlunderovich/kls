@@ -8,7 +8,7 @@ export const fetchDistributors = createAsyncThunk(
   async () => {
     try {
       const response = await axiosPrivate.get(`/distributors/?limit=10000`);
-      return response.data.results;
+      return response.data;
     } catch (error) {
       console.warn(error);
     }

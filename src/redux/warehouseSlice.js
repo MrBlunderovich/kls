@@ -10,7 +10,7 @@ export const fetchWarehouseItems = createAsyncThunk(
       const response = await axiosPrivate.get(`/products/?limit=10000`, {
         params: queryParams,
       });
-      return response.data.results;
+      return response.data;
     } catch (error) {
       console.warn(error);
     }

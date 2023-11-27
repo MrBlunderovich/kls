@@ -24,7 +24,7 @@ export default function Warehouse() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchWarehouseItems({ search, category, state }));
+    dispatch(fetchWarehouseItems({ search_query: search, category, state }));
   }, [search, category, state]);
 
   useEffect(() => {
