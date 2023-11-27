@@ -1,4 +1,4 @@
-export default function formatPhone(input) {
+export default function formatPhone(input, addCountryCode = false) {
   if (!input) return "";
   const string = input.toString().replace(/^\+996/, "");
   const result = [];
@@ -8,5 +8,6 @@ export default function formatPhone(input) {
     }
     result.push(char);
   });
-  return result.join("");
+  const output = result.join("");
+  return addCountryCode ? `+996 ${output}` : output;
 }

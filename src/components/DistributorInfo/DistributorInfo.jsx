@@ -1,3 +1,4 @@
+import formatPhone from "../../utils/formatPhone";
 import styles from "./DistributorInfo.module.css";
 
 export default function DistributorInfo({ info, variant = "large" }) {
@@ -20,8 +21,8 @@ export default function DistributorInfo({ info, variant = "large" }) {
         <InfoRow label="ФИО" value={name} />
         <InfoRow label="ИНН" value={inn} />
         <InfoRow label="Регион" value={region} />
-        <InfoRow label="Контактный номер" value={contact} />
-        <InfoRow label="Контактный номер" value={contact2} />
+        <InfoRow label="Контактный номер" value={formatPhone(contact, true)} />
+        <InfoRow label="Контактный номер" value={formatPhone(contact2, true)} />
       </div>
     </div>
   );

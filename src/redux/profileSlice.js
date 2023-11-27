@@ -34,11 +34,11 @@ export const fetchItems = createAsyncThunk(
 
 const initialState = {
   distributorInfo: {
-    name: "...",
-    inn: "...",
-    region: "...",
-    contact1: "...",
-    contact2: "...",
+    name: "Загрузка...",
+    inn: "Загрузка...",
+    region: "Загрузка...",
+    contact: "",
+    contact2: "",
   },
   isReturns: false,
   category: "",
