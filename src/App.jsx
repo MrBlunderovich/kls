@@ -1,7 +1,9 @@
 import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
 import { fetchOptions } from "./redux/optionsSlice";
 import Login from "./pages/Login/Login";
 import Layout from "./components/Layout/Layout";
@@ -64,6 +66,11 @@ export default function App() {
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        draggable={false}
+      />
       <Routes>{user ? privateRoutes : publicRoutes}</Routes>
     </>
   );
