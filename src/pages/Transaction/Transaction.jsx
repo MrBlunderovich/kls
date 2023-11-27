@@ -7,19 +7,28 @@ import {
   getDistributorById,
   getOrdersById,
   transactionActions,
+  fetchWarehouseItems,
 } from "../../redux/transactionSlice";
 import Order from "./Order/Order";
 import Return from "./Return/Return";
 import useReturnId from "../../hooks/useReturnId";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
+import showToastError from "../../utils/showToastError";
 
 ///////////////////////////////////////////////////////////////////////////////
 
 export default function Transaction() {
   const { id, isReturn } = useReturnId();
   const navigate404 = useNavigateReplace();
-  const { distributor, search, source, target, hoverRowId, orderNumber } =
-    useSelector((state) => state.transaction);
+  const {
+    distributor,
+    search,
+    source,
+    target,
+    hoverRowId,
+    orderNumber,
+    isLoading,
+  } = useSelector((state) => state.transaction);
   const dispatch = useDispatch();
 
   const targetTotalQuantity = target.reduce(
@@ -46,7 +55,13 @@ export default function Transaction() {
   }, [id, dispatch]);
 
   useEffect(() => {
-    dispatch(getOrdersById({ id, search_query: search }));
+    if (isReturn) {
+      dispatch(getOrdersById({ id, search_query: search }))
+        .unwrap()
+        .catch(showToastError);
+      return;
+    }
+    dispatch(fetchWarehouseItems({ search_query: search, state: "normal" }));
   }, [id, search, dispatch]);
 
   useEffect(() => {
@@ -76,6 +91,7 @@ export default function Transaction() {
             sourceTotalCost={sourceTotalCost}
             targetTotalCost={targetTotalCost}
             hoverRowId={hoverRowId}
+            loading={isLoading}
           />
         ) : (
           <Order
@@ -86,6 +102,7 @@ export default function Transaction() {
             orderNumber={orderNumber}
             targetTotalCost={targetTotalCost}
             hoverRowId={hoverRowId}
+            loading={isLoading}
           />
         )}
       </main>

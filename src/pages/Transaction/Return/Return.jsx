@@ -30,6 +30,7 @@ export default function Return({
   hoverRowId,
   sourceTotalCost,
   targetTotalCost,
+  loading,
 }) {
   const dispatch = useDispatch();
 
@@ -270,6 +271,7 @@ export default function Return({
       <TransactionSection>
         <DistributorInfo info={distributor} variant="small" />
         <ADTable
+          loading={loading}
           size="small"
           dataSource={sourceData}
           rowKey="id"

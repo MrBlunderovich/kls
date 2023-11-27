@@ -26,7 +26,7 @@ export const fetchWarehouseItems = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      console.warn(error);
+      return Promise.reject(error);
     }
   },
 );
@@ -62,6 +62,7 @@ export const getOrdersById = createAsyncThunk(
 ); */
 
 const initialState = {
+  isLoading: false,
   search: "",
   orderNumber: "",
   distributor: {
@@ -156,8 +157,9 @@ export const transactionSlice = createSlice({
     setOrderNumber: (state, action) => {
       state.orderNumber = action.payload;
     },
-    clearData: (state) => {
-      Object.keys(state).forEach((key) => (state[key] = initialState[key]));
+    clearData: () => {
+      //Object.keys(state).forEach((key) => (state[key] = initialState[key]));
+      return initialState;
     },
   },
   extraReducers: (builder) => {
@@ -165,11 +167,20 @@ export const transactionSlice = createSlice({
       .addCase(getDistributorById.fulfilled, (state, action) => {
         state.distributor = action.payload;
       })
-      .addCase(getDistributorById.rejected, (state, action) => {
-        console.log("getDistributorById failed");
-        console.log(action);
+
+      .addCase(getOrdersById.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(getOrdersById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.source = action.payload;
+      })
+
+      .addCase(fetchWarehouseItems.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchWarehouseItems.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.source = action.payload;
       });
   },

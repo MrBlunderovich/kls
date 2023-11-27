@@ -28,6 +28,7 @@ export default function Order({
   distributor,
   orderNumber,
   hoverRowId,
+  loading,
 }) {
   const dispatch = useDispatch();
 
@@ -242,6 +243,7 @@ export default function Order({
       <TransactionSection>
         <h3 className={parentStyles.sectionHeading}>Товар со склада</h3>
         <ADTable
+          loading={loading}
           size="small"
           dataSource={sourceData}
           rowKey="id"
