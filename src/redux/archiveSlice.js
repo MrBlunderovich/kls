@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
+import showToastError from "../utils/showToastError";
 
 const name = "archive";
 
@@ -12,7 +13,7 @@ export const fetchArchiveItems = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.warn(error);
+      return Promise.reject(error);
     }
   },
 );
@@ -24,7 +25,7 @@ export const restoreItemById = createAsyncThunk(
       const response = await axiosPrivate.delete(`/${entity}/archive/${id}/`);
       return response.data;
     } catch (error) {
-      console.warn(error);
+      return Promise.reject(error);
     }
   },
 );
@@ -58,6 +59,7 @@ export const archiveSlice = createSlice({
     builder.addCase(fetchArchiveItems.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
+      showToastError(action.error);
     });
   },
 });

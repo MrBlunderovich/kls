@@ -11,3 +11,8 @@ export default function formatPhone(input, addCountryCode = false) {
   const output = result.join("");
   return addCountryCode ? `+996 ${output}` : output;
 }
+
+export function renderPhone(text) {
+  if (!text) return "-";
+  return formatPhone(text, true);
+}

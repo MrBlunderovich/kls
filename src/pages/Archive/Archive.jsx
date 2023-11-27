@@ -2,6 +2,7 @@ import styles from "./Archive.module.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import CustomButton from "../../components/UI/CustomButton/CustomButton";
 import TableButton from "../../components/UI/TableButton/TableButton";
@@ -19,6 +20,8 @@ import renderSum from "../../utils/renderSum";
 import renderDate from "../../utils/renderDate";
 import renderCondition from "../../utils/renderCondition";
 import renderUnit from "../../utils/renderUnit";
+import showToastError from "../../utils/showToastError";
+import { renderPhone } from "../../utils/formatPhone";
 
 export default function Archive() {
   const dispatch = useDispatch();
@@ -38,12 +41,19 @@ export default function Archive() {
   }, [isWarehouse, dispatch]);
 
   function restoreFromArchive(entity, id, destination) {
+    const successMessage = isWarehouse
+      ? "Товар успешно восстановлен"
+      : "Дистрибьютор успешно восстановлен";
     dispatch(
       restoreItemById({
         entity,
         id,
       }),
-    ).then(() => navigate(destination || "../"));
+    )
+      .unwrap()
+      .then(() => toast.success(successMessage))
+      .then(() => navigate(destination || "../"))
+      .catch(showToastError);
   }
 
   ///////////////////////////////////////////////////////////////////////
@@ -70,11 +80,13 @@ export default function Archive() {
       title: "Контактный номер (1)",
       dataIndex: "contact",
       width: 190,
+      render: renderPhone,
     },
     {
       title: "Контактный номер (2)",
       dataIndex: "contact2",
       width: 190,
+      render: renderPhone,
     },
     {
       title: "Дата удаления",
@@ -195,6 +207,7 @@ export default function Archive() {
         <ADTable
           dataSource={items}
           columns={isWarehouse ? productColumns : distributorColumns}
+          loading={isLoading}
           rowKey="id"
           height="65vh"
         />
