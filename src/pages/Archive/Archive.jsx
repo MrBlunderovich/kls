@@ -36,7 +36,7 @@ export default function Archive() {
 
   useEffect(() => {
     const entity = isWarehouse ? "products" : "distributors";
-    dispatch(fetchArchiveItems(entity));
+    dispatch(fetchArchiveItems(entity)).unwrap().catch(showToastError);
     return () => dispatch(archiveActions.clearData());
   }, [isWarehouse, dispatch]);
 

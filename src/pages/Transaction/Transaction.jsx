@@ -1,6 +1,5 @@
 import styles from "./Transaction.module.css";
 import { useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import CustomSearch from "../../components/UI/CustomSearch/CustomSearch";
@@ -11,18 +10,14 @@ import {
 } from "../../redux/transactionSlice";
 import Order from "./Order/Order";
 import Return from "./Return/Return";
+import useReturnId from "../../hooks/useReturnId";
+import useNavigateReplace from "../../hooks/useNavigateReplace";
 
 ///////////////////////////////////////////////////////////////////////////////
 
 export default function Transaction() {
-  const { id } = useParams();
-  const { pathname } = useLocation();
-  const isReturn = pathname.match("return");
-  const navigate = useNavigate();
-  if (!id) {
-    navigate("/404");
-    //TODO: if distributor credentials failed to load > nav to 404?
-  }
+  const { id, isReturn } = useReturnId();
+  const navigate404 = useNavigateReplace();
   const { distributor, search, source, target, hoverRowId, orderNumber } =
     useSelector((state) => state.transaction);
   const dispatch = useDispatch();
@@ -47,11 +42,11 @@ export default function Transaction() {
   }, [targetTotalQuantity]);
 
   useEffect(() => {
-    dispatch(getDistributorById(id));
+    dispatch(getDistributorById(id)).unwrap().catch(navigate404);
   }, [id, dispatch]);
 
   useEffect(() => {
-    dispatch(getOrdersById({ id, search }));
+    dispatch(getOrdersById({ id, search_query: search }));
   }, [id, search, dispatch]);
 
   useEffect(() => {

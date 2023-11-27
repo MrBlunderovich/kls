@@ -17,6 +17,20 @@ export const getDistributorById = createAsyncThunk(
   },
 );
 
+export const fetchWarehouseItems = createAsyncThunk(
+  `${name}/fetchWarehouseItems`,
+  async (queryParams) => {
+    try {
+      const response = await axiosPrivate.get(`/products/?limit=10000`, {
+        params: queryParams,
+      });
+      return response.data;
+    } catch (error) {
+      console.warn(error);
+    }
+  },
+);
+
 export const getOrdersById = createAsyncThunk(
   `${name}/getOrdersById`,
   async ({ id, search }) => {
@@ -31,6 +45,21 @@ export const getOrdersById = createAsyncThunk(
     }
   },
 );
+/* 
+export const getOrdersById = createAsyncThunk(
+  `${name}/getOrdersById`,
+  async ({ id, search }) => {
+    try {
+      const response = await axiosDummy.get(`/distributor/orders/${id}/`, {
+        params: { search },
+      });
+      return response.data;
+    } catch (error) {
+      console.warn(error);
+      return Promise.reject(error);
+    }
+  },
+); */
 
 const initialState = {
   search: "",

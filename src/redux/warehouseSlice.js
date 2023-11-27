@@ -12,7 +12,7 @@ export const fetchWarehouseItems = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      console.warn(error);
+      return Promise.reject(error);
     }
   },
 );

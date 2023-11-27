@@ -15,6 +15,7 @@ import CustomSearch from "../../components/UI/CustomSearch/CustomSearch";
 import renderIndex from "../../utils/renderIndex";
 import renderUnit from "../../utils/renderUnit";
 import { CATEGORIES, PATHS } from "../../common/constants";
+import showToastError from "../../utils/showToastError";
 
 export default function Warehouse() {
   const { setCategory, setCondition, setSearch } = warehouseActions;
@@ -24,7 +25,9 @@ export default function Warehouse() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchWarehouseItems({ search_query: search, category, state }));
+    dispatch(fetchWarehouseItems({ search_query: search, category, state }))
+      .unwrap()
+      .catch(showToastError);
   }, [search, category, state]);
 
   useEffect(() => {
