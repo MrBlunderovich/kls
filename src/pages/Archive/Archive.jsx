@@ -149,7 +149,7 @@ export default function Archive() {
       title: "Сумма",
       dataIndex: "sum",
       align: "left",
-      width: 100,
+      width: 120,
       render: renderSum,
     },
     {
