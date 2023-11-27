@@ -19,6 +19,7 @@ import {
   S_UID_WIDTH,
   S_UNIT_WIDTH,
 } from "../../../common/constants";
+import renderUnit from "../../../utils/renderUnit";
 
 export default function Order({
   parentStyles,
@@ -65,6 +66,7 @@ export default function Order({
       dataIndex: "unit",
       align: "left",
       width: S_UNIT_WIDTH,
+      render: renderUnit,
     },
     {
       title: "Кол-во",
@@ -126,6 +128,7 @@ export default function Order({
       align: "left",
       width: S_UNIT_WIDTH,
       ellipsis: true,
+      render: renderUnit,
     },
     {
       title: "Кол-во",

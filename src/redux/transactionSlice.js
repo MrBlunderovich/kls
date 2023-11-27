@@ -17,8 +17,8 @@ export const getDistributorById = createAsyncThunk(
   },
 );
 
-export const fetchWarehouseItems = createAsyncThunk(
-  `${name}/fetchWarehouseItems`,
+export const getWarehouseItems = createAsyncThunk(
+  `${name}/getWarehouseItems`,
   async (queryParams) => {
     try {
       const response = await axiosPrivate.get(`/products/?limit=10000`, {
@@ -176,10 +176,10 @@ export const transactionSlice = createSlice({
         state.source = action.payload;
       })
 
-      .addCase(fetchWarehouseItems.pending, (state) => {
+      .addCase(getWarehouseItems.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(fetchWarehouseItems.fulfilled, (state, action) => {
+      .addCase(getWarehouseItems.fulfilled, (state, action) => {
         state.isLoading = false;
         state.source = action.payload;
       });

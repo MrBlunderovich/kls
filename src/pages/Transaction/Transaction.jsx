@@ -7,7 +7,7 @@ import {
   getDistributorById,
   getOrdersById,
   transactionActions,
-  fetchWarehouseItems,
+  getWarehouseItems,
 } from "../../redux/transactionSlice";
 import Order from "./Order/Order";
 import Return from "./Return/Return";
@@ -61,7 +61,7 @@ export default function Transaction() {
         .catch(showToastError);
       return;
     }
-    dispatch(fetchWarehouseItems({ search_query: search, state: "normal" }));
+    dispatch(getWarehouseItems({ search_query: search, state: "normal" }));
   }, [id, search, dispatch]);
 
   useEffect(() => {

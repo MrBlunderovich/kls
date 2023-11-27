@@ -21,6 +21,7 @@ import {
   S_UNIT_WIDTH,
 } from "../../../common/constants";
 import ConditionSelector from "../../../components/UI/ConditionSelector/ConditionSelector";
+import renderUnit from "../../../utils/renderUnit";
 
 export default function Return({
   parentStyles,
@@ -72,6 +73,7 @@ export default function Return({
       align: "left",
       width: S_UNIT_WIDTH,
       ellipsis: true,
+      render: renderUnit,
     },
     {
       title: "Кол-во",
@@ -154,6 +156,7 @@ export default function Return({
       align: "left",
       width: S_UNIT_WIDTH,
       ellipsis: true,
+      render: renderUnit,
     },
     {
       title: "Кол-во",
