@@ -12,9 +12,14 @@ export default function OrderButton({
   variant = "add",
   onClick = () => {},
   className = "",
+  disabled,
 }) {
   return (
-    <button onClick={onClick} className={`${styles.OrderButton} ${className}`}>
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`${styles.OrderButton} ${className}`}
+    >
       <img
         src={variant === "remove" ? deleteIcon : addIcon}
         alt={variant}

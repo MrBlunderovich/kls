@@ -33,6 +33,23 @@ export const getWarehouseItems = createAsyncThunk(
 
 export const getOrdersById = createAsyncThunk(
   `${name}/getOrdersById`,
+  async ({ id, queryParams }) => {
+    try {
+      const response = await axiosPrivate.get(
+        `transactions/distributor/${id}`,
+        {
+          params: queryParams,
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
+);
+
+/* export const getOrdersById = createAsyncThunk(
+  `${name}/getOrdersById`,
   async ({ id, search }) => {
     try {
       const response = await axiosDummy.get(`/distributor/orders/${id}/`, {
@@ -44,7 +61,7 @@ export const getOrdersById = createAsyncThunk(
       return Promise.reject(error);
     }
   },
-);
+); */
 
 export const postOrderById = createAsyncThunk(
   `${name}/postOrderById`,

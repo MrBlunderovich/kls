@@ -20,6 +20,7 @@ import {
   S_UNIT_WIDTH,
 } from "../../../common/constants";
 import renderUnit from "../../../utils/renderUnit";
+import { useEffect, useRef } from "react";
 
 export default function Order({
   parentStyles,
@@ -34,7 +35,12 @@ export default function Order({
   onPrint,
   invoiceNumber,
 }) {
+  const orderInputRef = useRef(null);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    orderInputRef.current && orderInputRef.current.focus();
+  }, [orderInputRef.current]);
 
   ////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////
@@ -91,6 +97,7 @@ export default function Order({
         //-------------------add to target
         <OrderButton
           variant="add"
+          disabled={record.quantity < 1}
           onClick={() => {
             dispatch(transactionActions.addItemToTarget(record));
           }}
@@ -197,6 +204,8 @@ export default function Order({
           <DistributorInfo info={distributor} variant="small" />
           <label className={parentStyles.formInput}>
             <input
+              className={parentStyles.invoiceNumberInput}
+              ref={orderInputRef}
               type="text"
               name="orderNumber"
               value={orderNumber}
@@ -204,6 +213,7 @@ export default function Order({
                 dispatch(transactionActions.setOrderNumber(e.target.value))
               }
               placeholder="Номер накладного"
+              required
             />
           </label>
         </div>
