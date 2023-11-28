@@ -7,13 +7,30 @@ const name = "profile";
 
 export const getDistributorById = createAsyncThunk(
   `${name}/getDistributorById`,
-  async (distributorId, thunkAPI) => {
+  async (distributorId) => {
     try {
       const response = await axiosPrivate.get(`/distributors/${distributorId}`);
 
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return Promise.reject(error);
+    }
+  },
+);
+
+export const getOrderHistoryById = createAsyncThunk(
+  `${name}/getOrderHistoryById`,
+  async ({ id, queryParams }) => {
+    try {
+      const response = await axiosPrivate.get(
+        `transactions/distributor/${id}`,
+        {
+          params: queryParams,
+        },
+      );
+      return response.data;
+    } catch (error) {
+      return Promise.reject(error);
     }
   },
 );
@@ -27,7 +44,7 @@ export const fetchItems = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return Promise.reject(error);
     }
   },
 );
@@ -80,6 +97,20 @@ export const profileSlice = createSlice({
         state.isLoading = false;
         state.error =
           action.payload || "Не удалось загрузить данные о дистрибьюторе";
+      });
+
+    builder
+      .addCase(getOrderHistoryById.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getOrderHistoryById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.data = action.payload;
+      })
+      .addCase(getOrderHistoryById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Не удалось загрузить историю";
       });
 
     builder

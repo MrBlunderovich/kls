@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchItems,
   getDistributorById,
+  getOrderHistoryById,
   profileActions,
 } from "../../redux/profileSlice";
 import PageHeading from "../../components/PageHeading/PageHeading";
@@ -16,6 +17,8 @@ import renderSum from "../../utils/renderSum";
 import renderDate from "../../utils/renderDate";
 import renderIndex from "../../utils/renderIndex";
 import { PATHS } from "../../common/constants";
+import renderUnit from "../../utils/renderUnit";
+import useNavigateReplace from "../../hooks/useNavigateReplace";
 
 export default function DistributorProfile() {
   const {
@@ -30,6 +33,7 @@ export default function DistributorProfile() {
   } = useSelector((state) => state.profile);
   const dispatch = useDispatch();
   const { id } = useParams();
+  const navigate404 = useNavigateReplace();
 
   const { setCategory, setSales, setStartDate, setEndDate } = profileActions;
 
@@ -40,24 +44,27 @@ export default function DistributorProfile() {
   };
 
   useEffect(() => {
-    dispatch(getDistributorById(id));
-  }, []);
+    dispatch(getDistributorById(id)).unwrap().catch(navigate404);
+  }, [id]);
 
   useEffect(() => {
+    if (isReturns) {
+      dispatch(
+        fetchItems({
+          id,
+          queryParams,
+          target: "returns",
+        }),
+      );
+      return;
+    }
     dispatch(
-      fetchItems({
+      getOrderHistoryById({
         id,
         queryParams,
-        target: isReturns ? "returns" : "orders",
       }),
     );
-  }, [
-    queryParams.category,
-    queryParams.start_date,
-    queryParams.end_date,
-    dispatch,
-    isReturns,
-  ]);
+  }, [category, startDate, endDate, dispatch, isReturns]);
 
   const orderColumns = [
     {
@@ -70,7 +77,7 @@ export default function DistributorProfile() {
     },
     {
       title: "Наименование",
-      dataIndex: "name",
+      dataIndex: "product_name",
       align: "left",
       ellipsis: true,
     },
@@ -85,6 +92,7 @@ export default function DistributorProfile() {
       dataIndex: "unit",
       align: "left",
       width: 100,
+      render: renderUnit,
     },
     {
       title: "Кол-во",
@@ -94,7 +102,7 @@ export default function DistributorProfile() {
     },
     {
       title: "Цена",
-      dataIndex: "price",
+      dataIndex: "product_price",
       align: "left",
       width: 100,
     },
@@ -107,7 +115,7 @@ export default function DistributorProfile() {
     },
     {
       title: "Дата продажи",
-      dataIndex: "order_date",
+      dataIndex: "created_at",
       align: "left",
       width: 120,
       render: renderDate,
