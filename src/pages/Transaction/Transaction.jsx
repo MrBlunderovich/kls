@@ -51,7 +51,7 @@ export default function Transaction() {
 
   useEffect(() => {
     dispatch(transactionActions.updateSource());
-  }, [targetTotalQuantity]);
+  }, [targetTotalQuantity, sourceTotalCost]);
 
   useEffect(() => {
     dispatch(getDistributorById(id)).unwrap().catch(navigate404);
@@ -83,6 +83,7 @@ export default function Transaction() {
       dispatch(postReturnById(payload));
       return;
     }
+    //
     const payload = {
       distributor: id,
       identification_number_invoice: orderNumber,
@@ -91,7 +92,13 @@ export default function Transaction() {
         quantity: item.quantity,
       })),
     };
-    dispatch(postOrderById(payload)).unwrap().catch(showToastError);
+    dispatch(postOrderById(payload))
+      .unwrap()
+      //.then((data) => console.log(data.identification_number_invoice))
+      .then((data) =>
+        dispatch(printOrderById(data.identification_number_invoice)),
+      )
+      .catch(showToastError);
   }
 
   function handlePrint() {
@@ -111,7 +118,7 @@ export default function Transaction() {
         heading={isReturn ? "Возврат товара" : "Оформление заявки"}
       >
         <CustomSearch
-          onChange={(value) => dispatch(transactionActions.setSearch(value))}
+          onSearch={(value) => dispatch(transactionActions.setSearch(value))}
         />
       </PageHeading>
       <main className={styles.main}>

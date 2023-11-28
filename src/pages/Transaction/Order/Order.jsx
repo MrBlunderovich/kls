@@ -214,6 +214,7 @@ export default function Order({
               }
               placeholder="Номер накладного"
               required
+              maxLength={20}
             />
           </label>
         </div>
@@ -239,7 +240,7 @@ export default function Order({
             className={parentStyles.orderTotal}
             value={targetTotalCost}
           />
-          <CustomButton
+          {/* <CustomButton
             className={parentStyles.orderButton}
             width="narrow"
             variant="secondary"
@@ -247,15 +248,16 @@ export default function Order({
             disabled={!invoiceNumber}
           >
             Распечатать
-          </CustomButton>
+          </CustomButton> */}
           <CustomButton
             className={parentStyles.orderButton}
-            width="narrow"
+            width="wide"
+            /* width="narrow" */
             variant="primary"
             onClick={onSave}
             disabled={!(orderNumber && targetData.length > 0)}
           >
-            Сохранить
+            Сохранить и распечатать
           </CustomButton>
         </div>
       </TransactionSection>
