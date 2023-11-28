@@ -2,8 +2,12 @@
   margin-top: 50px;
   margin-bottom: 34px;
   display: flex;
-  justify-content: space-between;
   align-items: flex-end;
+  gap: 30px;
+}
+
+.headingPrimarySection {
+  margin-right: auto;
 }
 
 .goBack {

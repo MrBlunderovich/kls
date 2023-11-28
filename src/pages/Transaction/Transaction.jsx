@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import CustomSearch from "../../components/UI/CustomSearch/CustomSearch";
+import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
 import {
   getDistributorById,
   getOrdersById,
@@ -16,6 +17,7 @@ import Return from "./Return/Return";
 import useReturnId from "../../hooks/useReturnId";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
 import showToastError from "../../utils/showToastError";
+import { CATEGORIES } from "../../common/constants";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +27,7 @@ export default function Transaction() {
   const {
     distributor,
     search,
+    category,
     source,
     target,
     hoverRowId,
@@ -64,8 +67,10 @@ export default function Transaction() {
         .catch(showToastError);
       return;
     }
-    dispatch(getWarehouseItems({ search_query: search, state: "normal" }));
-  }, [id, search, dispatch]);
+    dispatch(
+      getWarehouseItems({ search_query: search, category, state: "normal" }),
+    );
+  }, [id, search, category, dispatch]);
 
   useEffect(() => {
     return () => {
@@ -117,7 +122,15 @@ export default function Transaction() {
         backLink={`/distributors/profile/${id}`}
         heading={isReturn ? "Возврат товара" : "Оформление заявки"}
       >
+        <CustomSelect
+          className={styles.categorySelect}
+          name="category"
+          value={category}
+          onChange={(value) => dispatch(transactionActions.setCategory(value))}
+          options={[{ value: "", label: "Все товары" }, ...CATEGORIES]}
+        />
         <CustomSearch
+          className={styles.searchField}
           onSearch={(value) => dispatch(transactionActions.setSearch(value))}
         />
       </PageHeading>

@@ -3,6 +3,14 @@
   justify-content: space-between;
 }
 
+.categorySelect {
+  flex: 0 1 200px;
+}
+
+.searchField {
+  flex: 0 1 500px;
+}
+
 .invoiceNumberInput {
   width: 182px;
   height: 30px;

@@ -110,6 +110,7 @@ const initialState = {
   isLoading: false,
   invoiceNumber: null,
   search: "",
+  category: "",
   orderNumber: "",
   distributor: {
     name: "Загрузка...",
@@ -127,6 +128,9 @@ export const transactionSlice = createSlice({
   name,
   initialState,
   reducers: {
+    setCategory: (state, action) => {
+      state.category = action.payload;
+    },
     setSearch: (state, action) => {
       state.search = action.payload;
     },
