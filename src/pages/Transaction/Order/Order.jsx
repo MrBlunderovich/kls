@@ -20,7 +20,6 @@ import {
   S_UNIT_WIDTH,
 } from "../../../common/constants";
 import renderUnit from "../../../utils/renderUnit";
-import { useEffect, useRef } from "react";
 
 export default function Order({
   parentStyles,
@@ -33,12 +32,7 @@ export default function Order({
   loading,
   onSave,
 }) {
-  const orderInputRef = useRef(null);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    orderInputRef.current && orderInputRef.current.focus();
-  }, [orderInputRef.current]);
 
   ////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////////////////////
@@ -203,7 +197,6 @@ export default function Order({
           <label className={parentStyles.formInput}>
             <input
               className={parentStyles.invoiceNumberInput}
-              ref={orderInputRef}
               type="text"
               name="orderNumber"
               value={orderNumber}
@@ -213,6 +206,7 @@ export default function Order({
               placeholder="Номер накладного"
               required
               maxLength={20}
+              autoFocus
             />
           </label>
         </div>
