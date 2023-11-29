@@ -30,6 +30,7 @@ export const PATHS = {
   order: "/distributors/order",
   return: "/distributors/return",
   notFound: "/not-found",
+  logIn: "/login",
   logOut: "/logout",
 };
 

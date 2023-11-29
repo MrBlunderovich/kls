@@ -1,7 +1,7 @@
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import { fetchOptions } from "./redux/optionsSlice";
@@ -17,20 +17,55 @@ import Logout from "./pages/Logout/Logout";
 import NotFound from "./pages/NotFound/NotFound";
 import Transaction from "./pages/Transaction/Transaction";
 import Warehouse_ from "./experimental_pages/ExperimentalWarehouse/Warehouse_";
+import { PATHS } from "./common/constants";
 
 const publicRoutes = (
   <>
-    <Route path="/login" element={<Login />} />
-    <Route path="*" element={<Navigate to="/login" />} />
+    <Route path={PATHS.logIn} element={<Login />} />
+    <Route path="*" element={<Navigate to={PATHS.logIn} />} />
   </>
 );
 
 const privateRoutes = (
   <>
     <Route path="/" element={<Layout />}>
-      <Route index element={<Navigate to="/warehouse" replace />} />
-      {/* temporary table route */}
       <Route path="/table" element={<Warehouse_ />} />
+
+      <Route index element={<Navigate to={PATHS.products} replace />} />
+
+      <Route path={PATHS.products} element={<Warehouse />} />
+      <Route path={PATHS.productsArchive} element={<Archive />} />
+      <Route path={PATHS.productsCreate} element={<EditProduct />} />
+      <Route path={PATHS.productsEdit + "/:id"} element={<EditProduct />} />
+
+      <Route path={PATHS.distributors} element={<Distributors />} />
+      <Route
+        path={PATHS.distributorsProfile + "/:id"}
+        element={<DistributorProfile />}
+      />
+      <Route
+        path={PATHS.distributorsEdit + "/:id"}
+        element={<EditDistributor />}
+      />
+      <Route path={PATHS.order + "/:id"} element={<Transaction />} />
+      <Route path={PATHS.return + "/:id"} element={<Transaction />} />
+      <Route path={PATHS.distributorsCreate} element={<EditDistributor />} />
+      <Route path={PATHS.distributorsArchive} element={<Archive />} />
+    </Route>
+
+    <Route path={PATHS.logIn} element={<Navigate to={PATHS.products} />} />
+    <Route path={PATHS.logOut} element={<Logout />} />
+    <Route path="*" element={<Navigate to={PATHS.notFound} replace />} />
+    <Route path={PATHS.notFound} element={<NotFound />} />
+  </>
+);
+/* const privateRoutes = (
+  <>
+    <Route path="/" element={<Layout />}>
+      <Route index element={<Navigate to="/warehouse" replace />} />
+
+      <Route path="/table" element={<Warehouse_ />} />
+
       <Route path="warehouse" element={<Outlet />}>
         <Route index element={<Warehouse />} />
         <Route path="archive" element={<Archive />} />
@@ -52,7 +87,7 @@ const privateRoutes = (
     <Route path="*" element={<Navigate to="/not-found" replace />} />
     <Route path="/not-found" element={<NotFound />} />
   </>
-);
+); */
 
 export default function App() {
   const dispatch = useDispatch();
