@@ -32,8 +32,6 @@ export default function Order({
   hoverRowId,
   loading,
   onSave,
-  onPrint,
-  invoiceNumber,
 }) {
   const orderInputRef = useRef(null);
   const dispatch = useDispatch();

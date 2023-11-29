@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
-import { axiosDummy } from "../api/axiosDummy";
+import showToastLoader from "../utils/showToastLoader";
 
 const name = "transaction";
 
@@ -48,16 +48,21 @@ export const getOrdersById = createAsyncThunk(
   },
 );
 
-/* export const getOrdersById = createAsyncThunk(
-  `${name}/getOrdersById`,
-  async ({ id, search }) => {
+/* export const postOrderById = createAsyncThunk(
+  `${name}/postOrderById`,
+  async (data) => {
     try {
-      const response = await axiosDummy.get(`/distributor/orders/${id}/`, {
-        params: { search },
-      });
-      return response.data;
+      const saveResponse = await axiosPrivate.post(
+        `/transactions/invoices/`,
+        data,
+      );
+      const invoiceNumber = saveResponse.data.identification_number_invoice;
+      const printResponse = await axiosPrivate.get(
+        `/transactions/generate_pdf/${invoiceNumber}/`,
+      );
+      console.log(printResponse);
+      return saveResponse.data;
     } catch (error) {
-      console.warn(error);
       return Promise.reject(error);
     }
   },
@@ -67,17 +72,18 @@ export const postOrderById = createAsyncThunk(
   `${name}/postOrderById`,
   async (data) => {
     try {
-      const response = await axiosPrivate.post(`/transactions/invoices/`, data);
-      return response.data;
+      const response = await showToastLoader(
+        axiosPrivate.post(`/transactions/invoices/`, data),
+      );
+      return response.data.identification_number_invoice;
     } catch (error) {
-      console.warn(error);
       return Promise.reject(error);
     }
   },
 );
 
 export const printOrderById = createAsyncThunk(
-  `${name}/postOrderById`,
+  `${name}/printOrderById`,
   async (id) => {
     try {
       const response = await axiosPrivate.get(
@@ -85,26 +91,10 @@ export const printOrderById = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.warn(error);
       return Promise.reject(error);
     }
   },
 );
-/* 
-export const getOrdersById = createAsyncThunk(
-  `${name}/getOrdersById`,
-  async ({ id, search }) => {
-    try {
-      const response = await axiosDummy.get(`/distributor/orders/${id}/`, {
-        params: { search },
-      });
-      return response.data;
-    } catch (error) {
-      console.warn(error);
-      return Promise.reject(error);
-    }
-  },
-); */
 
 const initialState = {
   isLoading: false,
@@ -208,7 +198,6 @@ export const transactionSlice = createSlice({
       state.orderNumber = action.payload;
     },
     clearData: () => {
-      //Object.keys(state).forEach((key) => (state[key] = initialState[key]));
       return initialState;
     },
   },
@@ -232,11 +221,11 @@ export const transactionSlice = createSlice({
       .addCase(getWarehouseItems.fulfilled, (state, action) => {
         state.isLoading = false;
         state.source = action.payload;
-      })
-      .addCase(postOrderById.fulfilled, (state, action) => {
+      });
+    /* .addCase(postOrderById.fulfilled, (state, action) => {
         state.isLoading = false;
         state.invoiceNumber = action.payload.id;
-      });
+      }); */
   },
 });
 

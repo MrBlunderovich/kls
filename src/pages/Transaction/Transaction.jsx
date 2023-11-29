@@ -1,6 +1,7 @@
 import styles from "./Transaction.module.css";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import CustomSearch from "../../components/UI/CustomSearch/CustomSearch";
 import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
@@ -33,7 +34,6 @@ export default function Transaction() {
     hoverRowId,
     orderNumber,
     isLoading,
-    invoiceNumber,
   } = useSelector((state) => state.transaction);
   const dispatch = useDispatch();
 
@@ -76,20 +76,30 @@ export default function Transaction() {
     return () => {
       dispatch(transactionActions.clearData());
     };
-  }, [dispatch]);
+  }, []);
 
   function handleSave() {
+    // ---------------------------------оформление возврата
     if (isReturn) {
-      const payload = {
-        distributor: id,
-        identification_number_invoice: orderNumber,
-        products_invoice: target,
-      };
-      dispatch(postReturnById(payload));
+      dispatch(postReturnById(composeReturnData()))
+        .unwrap()
+        .then(() => toast.success(`Возврат успешно сохранен`))
+        .catch(showToastError);
       return;
     }
-    //
-    const payload = {
+    // ---------------------------------оформление заказа
+    dispatch(postOrderById(composeOrderData()))
+      .unwrap()
+      .then((id) => {
+        toast.success(`Заказ №${id} успешно сохранен`);
+        return id;
+      })
+      .then((id) => dispatch(printOrderById(id)))
+      .catch(showToastError);
+  }
+
+  function composeOrderData() {
+    return {
       distributor: id,
       identification_number_invoice: orderNumber,
       products_invoice: target.map((item) => ({
@@ -97,15 +107,19 @@ export default function Transaction() {
         quantity: item.quantity,
       })),
     };
-    dispatch(postOrderById(payload))
-      .unwrap()
-      //.then((data) => console.log(data.identification_number_invoice))
-      .then((data) =>
-        dispatch(printOrderById(data.identification_number_invoice)),
-      )
-      .catch(showToastError);
   }
 
+  function composeReturnData() {
+    return {
+      distributor: id,
+      identification_number_invoice: orderNumber,
+      products_invoice: target.map((item) => ({
+        product_id: item.id,
+        quantity: item.quantity,
+      })),
+    };
+  }
+  /* 
   function handlePrint() {
     if (isReturn) {
       dispatch(printOrderById(invoiceNumber));
@@ -113,7 +127,7 @@ export default function Transaction() {
     }
     dispatch(printOrderById(invoiceNumber));
     return;
-  }
+  } */
 
   return (
     <div className="wideContainer">
@@ -159,8 +173,7 @@ export default function Transaction() {
             hoverRowId={hoverRowId}
             loading={isLoading}
             onSave={handleSave}
-            onPrint={handlePrint}
-            invoiceNumber={invoiceNumber}
+            /* onPrint={handlePrint} */
           />
         )}
       </main>
