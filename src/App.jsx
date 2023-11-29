@@ -26,7 +26,26 @@ const publicRoutes = (
   </>
 );
 
-const privateRoutes = (
+const guestRoutes = (
+  <>
+    <Route path="/" element={<Layout />}>
+      <Route index element={<Navigate to={PATHS.products} replace />} />
+
+      <Route path={PATHS.products} element={<Warehouse />} />
+      <Route path={PATHS.productsArchive} element={<Archive />} />
+
+      <Route path={PATHS.distributors} element={<Distributors />} />
+      <Route path={PATHS.distributorsArchive} element={<Archive />} />
+    </Route>
+
+    <Route path={PATHS.logIn} element={<Navigate to={PATHS.products} />} />
+    <Route path={PATHS.logOut} element={<Logout />} />
+    <Route path="*" element={<Navigate to={PATHS.notFound} replace />} />
+    <Route path={PATHS.notFound} element={<NotFound />} />
+  </>
+);
+
+const officerRoutes = (
   <>
     <Route path="/" element={<Layout />}>
       <Route path="/table" element={<Warehouse_ />} />
@@ -59,45 +78,57 @@ const privateRoutes = (
     <Route path={PATHS.notFound} element={<NotFound />} />
   </>
 );
-/* const privateRoutes = (
+
+const directorRoutes = (
   <>
     <Route path="/" element={<Layout />}>
-      <Route index element={<Navigate to="/warehouse" replace />} />
-
       <Route path="/table" element={<Warehouse_ />} />
 
-      <Route path="warehouse" element={<Outlet />}>
-        <Route index element={<Warehouse />} />
-        <Route path="archive" element={<Archive />} />
-        <Route path="create" element={<EditProduct />} />
-        <Route path="edit/:id" element={<EditProduct />} />
-      </Route>
-      <Route path="distributors" element={<Outlet />}>
-        <Route index element={<Distributors />} />
-        <Route path="profile/:id" element={<DistributorProfile />} />
-        <Route path="edit/:id" element={<EditDistributor />} />
-        <Route path="order/:id" element={<Transaction />} />
-        <Route path="return/:id" element={<Transaction />} />
-        <Route path="create" element={<EditDistributor />} />
-        <Route path="archive" element={<Archive />} />
-      </Route>
+      <Route index element={<Navigate to={PATHS.products} replace />} />
+
+      <Route path={PATHS.products} element={<Warehouse />} />
+      <Route path={PATHS.productsArchive} element={<Archive />} />
+      <Route path={PATHS.productsCreate} element={<EditProduct />} />
+      <Route path={PATHS.productsEdit + "/:id"} element={<EditProduct />} />
+
+      <Route path={PATHS.distributors} element={<Distributors />} />
+      <Route
+        path={PATHS.distributorsProfile + "/:id"}
+        element={<DistributorProfile />}
+      />
+      <Route
+        path={PATHS.distributorsEdit + "/:id"}
+        element={<EditDistributor />}
+      />
+      <Route path={PATHS.order + "/:id"} element={<Transaction />} />
+      <Route path={PATHS.return + "/:id"} element={<Transaction />} />
+      <Route path={PATHS.distributorsCreate} element={<EditDistributor />} />
+      <Route path={PATHS.distributorsArchive} element={<Archive />} />
     </Route>
-    <Route path="/login" element={<Navigate to="/warehouse" />} />
-    <Route path="/logout" element={<Logout />} />
-    <Route path="*" element={<Navigate to="/not-found" replace />} />
-    <Route path="/not-found" element={<NotFound />} />
+
+    <Route path={PATHS.logIn} element={<Navigate to={PATHS.products} />} />
+    <Route path={PATHS.logOut} element={<Logout />} />
+    <Route path="*" element={<Navigate to={PATHS.notFound} replace />} />
+    <Route path={PATHS.notFound} element={<NotFound />} />
   </>
-); */
+);
 
 export default function App() {
-  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (user) {
-      dispatch(fetchOptions());
+  function getUserRoutes(user) {
+    switch (user) {
+      case "Директор":
+        return directorRoutes;
+      case "Завсклад":
+        return officerRoutes;
+      case "Гость":
+        return guestRoutes;
+
+      default:
+        return publicRoutes;
     }
-  }, [user, dispatch]);
+  }
 
   return (
     <>
@@ -106,7 +137,7 @@ export default function App() {
         autoClose={2000}
         draggable={false}
       />
-      <Routes>{user ? privateRoutes : publicRoutes}</Routes>
+      <Routes>{getUserRoutes(user)}</Routes>
     </>
   );
 }
