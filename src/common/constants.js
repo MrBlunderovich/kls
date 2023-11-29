@@ -38,6 +38,8 @@ export const ACCESS_DENIED_ERROR = "access_denied";
 
 export const SEARCH_DEBOUNCE_DELAY = 700;
 
+export const ALLOW_SCROLL_QUANTITY_CONTROL = false;
+
 //-------------------TABLES---------------------
 export const S_INDEX_WIDTH = 40;
 export const S_UID_WIDTH = 90;

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import upIcon from "../../../assets/icons/bxs_up-arrow.svg";
 import downIcon from "../../../assets/icons/bxs_down-arrow.svg";
+import { ALLOW_SCROLL_QUANTITY_CONTROL } from "../../../common/constants";
 
 export default function QuantityController({ value, maxValue, onChange }) {
   const [inputValue, setInputValue] = useState(value);
@@ -48,6 +49,18 @@ export default function QuantityController({ value, maxValue, onChange }) {
       setInputValue(1);
     }
   }
+
+  function handleWheel(e) {
+    if (!ALLOW_SCROLL_QUANTITY_CONTROL) return;
+
+    const directionPositive = e.deltaY < 0;
+    if (directionPositive) {
+      handleChangeValue(+inputValue + 1);
+    } else {
+      handleChangeValue(+inputValue - 1);
+    }
+  }
+
   return (
     <div className={styles.QuantityController}>
       <span className={styles.inputWrapper}>
@@ -57,6 +70,7 @@ export default function QuantityController({ value, maxValue, onChange }) {
           value={inputValue}
           onChange={handleChange}
           onBlur={handleBlur}
+          onWheel={handleWheel}
         />
       </span>
       <div className={styles.controls}>
