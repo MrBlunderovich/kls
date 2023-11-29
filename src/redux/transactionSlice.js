@@ -75,9 +75,9 @@ export const postOrderById = createAsyncThunk(
       const response = await showToastLoader(
         axiosPrivate.post(`/transactions/invoices/`, data),
       );
-      return response.data.identification_number_invoice;
+      return response.data;
     } catch (error) {
-      return Promise.reject(error);
+      return Promise.reject(error.request?.responseText || error);
     }
   },
 );
@@ -88,10 +88,11 @@ export const printOrderById = createAsyncThunk(
     try {
       const response = await axiosPrivate.get(
         `/transactions/generate_pdf/${id}/`,
+        { responseType: "blob" },
       );
       return response.data;
     } catch (error) {
-      return Promise.reject(error);
+      return Promise.reject(error.request?.responseText || error);
     }
   },
 );

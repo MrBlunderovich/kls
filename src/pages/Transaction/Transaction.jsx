@@ -1,5 +1,5 @@
 import styles from "./Transaction.module.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import PageHeading from "../../components/PageHeading/PageHeading";
@@ -18,13 +18,20 @@ import Return from "./Return/Return";
 import useReturnId from "../../hooks/useReturnId";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
 import showToastError from "../../utils/showToastError";
-import { CATEGORIES } from "../../common/constants";
+import { CATEGORIES, PATHS } from "../../common/constants";
+import CustomModal from "../../components/CustomModal/CustomModal";
+import downloadFile from "../../utils/downloadFile";
 
 ///////////////////////////////////////////////////////////////////////////////
 
 export default function Transaction() {
+  const [showSaveModal, setShowSaveModal] = useState(false);
   const { id, isReturn } = useReturnId();
   const navigate404 = useNavigateReplace();
+  const navigateToProfile = useNavigateReplace(
+    `${PATHS.distributorsProfile}/${id}`,
+    false,
+  );
   const {
     distributor,
     search,
@@ -79,22 +86,37 @@ export default function Transaction() {
   }, []);
 
   function handleSave() {
+    setShowSaveModal(true);
+  }
+
+  function handleConfirmSave() {
     // ---------------------------------оформление возврата
     if (isReturn) {
-      dispatch(postReturnById(composeReturnData()))
+      dispatch(postOrderById(composeReturnData()))
         .unwrap()
-        .then(() => toast.success(`Возврат успешно сохранен`))
+        .then(() => {
+          toast.success(`Возврат успешно сохранен`);
+          return invoiceId;
+        })
+        //.then((invoiceId) => dispatch(printOrderById(invoiceId)))
+        .then(navigateToProfile)
         .catch(showToastError);
-      return;
     }
     // ---------------------------------оформление заказа
     dispatch(postOrderById(composeOrderData()))
       .unwrap()
-      .then((id) => {
-        toast.success(`Заказ №${id} успешно сохранен`);
-        return id;
+      .then((data) => {
+        const orderNumber = data.identification_number_invoice;
+        toast.success(`Заказ №${orderNumber} успешно сохранен`);
+        return data.id;
       })
-      .then((id) => dispatch(printOrderById(id)))
+      .then((invoiceId) =>
+        dispatch(printOrderById(invoiceId))
+          .unwrap()
+          .then(downloadFile)
+          .catch(showToastError),
+      )
+      .then(navigateToProfile)
       .catch(showToastError);
   }
 
@@ -111,12 +133,8 @@ export default function Transaction() {
 
   function composeReturnData() {
     return {
-      distributor: id,
-      identification_number_invoice: orderNumber,
-      products_invoice: target.map((item) => ({
-        product_id: item.id,
-        quantity: item.quantity,
-      })),
+      ...composeOrderData(),
+      is_return: true,
     };
   }
   /* 
@@ -135,6 +153,7 @@ export default function Transaction() {
         buttonText="Назад"
         backLink={`/distributors/profile/${id}`}
         heading={isReturn ? "Возврат товара" : "Оформление заявки"}
+        modalOnLeave={true}
       >
         <CustomSelect
           className={styles.categorySelect}
@@ -177,6 +196,15 @@ export default function Transaction() {
           />
         )}
       </main>
+      {showSaveModal && (
+        <CustomModal
+          message="Вы точно хотите сохранить?"
+          primaryAction={handleConfirmSave}
+          secondaryAction={() => {
+            setShowSaveModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }
