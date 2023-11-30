@@ -22,6 +22,7 @@ import {
 } from "../../../common/constants";
 import ConditionSelector from "../../../components/UI/ConditionSelector/ConditionSelector";
 import renderUnit from "../../../utils/renderUnit";
+import renderCondition from "../../../utils/renderCondition";
 
 export default function Return({
   parentStyles,
@@ -49,7 +50,9 @@ export default function Return({
     },
     {
       title: "Наименование",
-      dataIndex: "name",
+      //dataIndex: "name",
+      //FIX_ME:
+      dataIndex: "product_name",
       key: "name",
       align: "left",
       ellipsis: true,
@@ -80,7 +83,9 @@ export default function Return({
     },
     {
       title: "Цена",
-      dataIndex: "price",
+      //dataIndex: "price",
+      //FIX_ME:
+      dataIndex: "product_price",
       key: "price",
       align: "left",
       width: S_PRICE_WIDTH,
@@ -94,7 +99,9 @@ export default function Return({
     },
     {
       title: "Дата",
-      dataIndex: "order_date",
+      //dataIndex: "order_date",
+      //FIX_ME:
+      dataIndex: "created_at",
       align: "left",
       width: S_DATE_WIDTH,
       ellipsis: true,
@@ -130,7 +137,9 @@ export default function Return({
     },
     {
       title: "Наименование",
-      dataIndex: "name",
+      //dataIndex: "name",
+      //FIX_ME:
+      dataIndex: "product_name",
       key: "name",
       align: "left",
       ellipsis: true,
@@ -170,8 +179,9 @@ export default function Return({
     },
     {
       title: "Цена",
-      dataIndex: "price",
-      key: "price",
+      //dataIndex: "price",
+      //FIX_ME:
+      dataIndex: "product_price",
       align: "left",
       width: S_PRICE_WIDTH,
     },
@@ -183,7 +193,9 @@ export default function Return({
     },
     {
       title: "Дата",
-      dataIndex: "order_date",
+      //dataIndex: "order_date",
+      //FIX_ME:
+      dataIndex: "created_at",
       align: "left",
       width: S_DATE_WIDTH,
       ellipsis: true,
@@ -198,7 +210,7 @@ export default function Return({
         <ConditionSelector
           onClick={() => dispatch(transactionActions.toggleCondition(record))}
         >
-          {text}
+          {renderCondition(text)}
         </ConditionSelector>
       ),
     },
@@ -244,19 +256,12 @@ export default function Return({
         <div className={parentStyles.controls}>
           <CustomButton
             className={parentStyles.orderButton}
-            width="narrow"
-            variant="secondary"
-            onClick={onPrint}
-          >
-            Распечатать
-          </CustomButton>
-          <CustomButton
-            className={parentStyles.orderButton}
-            width="narrow"
+            width="wide"
             variant="primary"
             onClick={onSave}
+            disabled={targetData.length === 0}
           >
-            Сохранить
+            Сохранить и распечатать
           </CustomButton>
           <TotalIndicator
             className={parentStyles.total}

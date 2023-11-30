@@ -130,11 +130,7 @@ export const transactionSlice = createSlice({
           ...record,
           maxQuantity: record.quantity,
           quantity: 1,
-          order_date: new Date().toLocaleDateString("fr-CA", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          }),
+          state: "normal",
         });
       } else {
         if (existingRecord.quantity < existingRecord.maxQuantity) {
@@ -167,10 +163,10 @@ export const transactionSlice = createSlice({
     toggleCondition: (state, action) => {
       const id = action.payload.id;
       const currentCondition = action.payload.state;
-      const isDefect = currentCondition === "Брак";
+      const isDefect = currentCondition === "defect";
       state.target.find((item) => item.id === id).state = isDefect
-        ? "Норма"
-        : "Брак";
+        ? "normal"
+        : "defect";
     },
     setHoverRowId: (state, action) => {
       state.hoverRowId = action.payload;

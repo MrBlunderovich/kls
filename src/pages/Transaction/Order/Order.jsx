@@ -153,14 +153,6 @@ export default function Order({
       render: renderSum,
     },
     {
-      title: "Дата",
-      dataIndex: "order_date",
-      align: "left",
-      width: S_DATE_WIDTH,
-      ellipsis: true,
-      render: renderDate,
-    },
-    {
       title: "Отменить",
       dataIndex: "cancel",
       align: "center",
@@ -222,19 +214,9 @@ export default function Order({
             className={parentStyles.orderTotal}
             value={targetTotalCost}
           />
-          {/* <CustomButton
-            className={parentStyles.orderButton}
-            width="narrow"
-            variant="secondary"
-            onClick={onPrint}
-            disabled={!invoiceNumber}
-          >
-            Распечатать
-          </CustomButton> */}
           <CustomButton
             className={parentStyles.orderButton}
             width="wide"
-            /* width="narrow" */
             variant="primary"
             onClick={onSave}
             disabled={!(orderNumber && targetData.length > 0)}
