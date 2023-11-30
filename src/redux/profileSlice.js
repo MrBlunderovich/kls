@@ -81,6 +81,9 @@ export const profileSlice = createSlice({
     setEndDate: (state, action) => {
       state.endDate = yearLimiter(action.payload);
     },
+    clearData: () => {
+      return initialState;
+    },
   },
 
   extraReducers: (builder) => {

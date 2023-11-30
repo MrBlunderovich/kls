@@ -35,7 +35,8 @@ export default function DistributorProfile() {
   const { id } = useParams();
   const navigate404 = useNavigateReplace();
 
-  const { setCategory, setSales, setStartDate, setEndDate } = profileActions;
+  const { setCategory, setSales, setStartDate, setEndDate, clearData } =
+    profileActions;
 
   const queryParams = {
     category,
@@ -45,6 +46,7 @@ export default function DistributorProfile() {
 
   useEffect(() => {
     dispatch(getDistributorById(id)).unwrap().catch(navigate404);
+    return () => dispatch(clearData());
   }, [id]);
 
   useEffect(() => {

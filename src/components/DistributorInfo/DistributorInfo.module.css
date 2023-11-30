@@ -9,8 +9,18 @@
   gap: 20px;
 }
 
-.avatar {
+.avatarWrapper {
+  border-radius: 10px;
+  overflow: hidden;
   height: 147px;
+  width: 147px;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .infoFlexContainer {
@@ -38,7 +48,8 @@
   line-height: 130%;
 }
 
-.DistributorInfo.small .avatar {
+.DistributorInfo.small .avatarWrapper {
+  width: 113px;
   height: 113px;
 }
 
