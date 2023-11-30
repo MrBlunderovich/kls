@@ -199,10 +199,6 @@ export const transactionSlice = createSlice({
         state.isLoading = false;
         state.source = action.payload;
       });
-    /* .addCase(postOrderById.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.invoiceNumber = action.payload.id;
-      }); */
   },
 });
 
