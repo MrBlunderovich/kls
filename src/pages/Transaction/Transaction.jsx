@@ -69,7 +69,9 @@ export default function Transaction() {
 
   useEffect(() => {
     if (isReturn) {
-      dispatch(getOrdersById({ id, search_query: search }))
+      dispatch(
+        getOrdersById({ id, queryParams: { category, search_query: search } }),
+      )
         .unwrap()
         .catch(showToastError);
       return;
