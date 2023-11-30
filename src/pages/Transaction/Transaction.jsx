@@ -98,7 +98,6 @@ export default function Transaction() {
           toast.success(`Возврат успешно сохранен`);
           return invoiceId;
         })
-        //.then((invoiceId) => dispatch(printOrderById(invoiceId)))
         .then(navigateToProfile)
         .catch(showToastError);
     }
@@ -137,15 +136,6 @@ export default function Transaction() {
       is_return: true,
     };
   }
-  /* 
-  function handlePrint() {
-    if (isReturn) {
-      dispatch(printOrderById(invoiceNumber));
-      return;
-    }
-    dispatch(printOrderById(invoiceNumber));
-    return;
-  } */
 
   return (
     <div className="wideContainer">
@@ -192,7 +182,6 @@ export default function Transaction() {
             hoverRowId={hoverRowId}
             loading={isLoading}
             onSave={handleSave}
-            /* onPrint={handlePrint} */
           />
         )}
       </main>

@@ -48,26 +48,6 @@ export const getOrdersById = createAsyncThunk(
   },
 );
 
-/* export const postOrderById = createAsyncThunk(
-  `${name}/postOrderById`,
-  async (data) => {
-    try {
-      const saveResponse = await axiosPrivate.post(
-        `/transactions/invoices/`,
-        data,
-      );
-      const invoiceNumber = saveResponse.data.identification_number_invoice;
-      const printResponse = await axiosPrivate.get(
-        `/transactions/generate_pdf/${invoiceNumber}/`,
-      );
-      console.log(printResponse);
-      return saveResponse.data;
-    } catch (error) {
-      return Promise.reject(error);
-    }
-  },
-); */
-
 export const postOrderById = createAsyncThunk(
   `${name}/postOrderById`,
   async (data) => {

@@ -21,4 +21,11 @@ export const store = configureStore({
     options: optionsReducer,
     transaction: transactionReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these action types
+        ignoredActions: ["transaction/printOrderById/fulfilled"],
+      },
+    }),
 });
