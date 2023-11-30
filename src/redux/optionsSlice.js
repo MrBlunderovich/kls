@@ -5,12 +5,12 @@ const name = "options";
 
 export const fetchOptions = createAsyncThunk(
   `${name}/fetchOptions`,
-  async (_, thunkAPI) => {
+  async () => {
     try {
       const response = await axiosDummy.get(`/options`);
       return response.data;
     } catch (error) {
-      console.warn(error);
+      return Promise.reject(error);
     }
   },
 );
@@ -31,7 +31,7 @@ export const optionsSlice = createSlice({
     builder.addCase(fetchOptions.fulfilled, (state, action) => {
       state.options = action.payload;
     });
-    builder.addCase(fetchOptions.rejected, (state, action) => {
+    builder.addCase(fetchOptions.rejected, () => {
       console.warn("Failed to fetch options");
     });
   },
