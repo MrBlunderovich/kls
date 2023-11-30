@@ -169,7 +169,6 @@ export default function Transaction() {
             hoverRowId={hoverRowId}
             loading={isLoading}
             onSave={handleSave}
-            onPrint={handlePrint}
           />
         ) : (
           <Order
