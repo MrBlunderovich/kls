@@ -16,12 +16,14 @@ import renderIndex from "../../utils/renderIndex";
 import renderUnit from "../../utils/renderUnit";
 import { CATEGORIES, PATHS } from "../../common/constants";
 import showToastError from "../../utils/showToastError";
+import usePermissions from "../../hooks/usePermissions";
 
 export default function Warehouse() {
   const { setCategory, setCondition, setSearch } = warehouseActions;
   const { items, isLoading, error, search, category, state } = useSelector(
     (state) => state.warehouse,
   );
+  const { isDirector, isGuest } = usePermissions();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -78,7 +80,9 @@ export default function Warehouse() {
       align: "left",
       width: "11%",
     },
-    {
+  ];
+  isDirector &&
+    tableColumns.push({
       title: "Ред.",
       key: "action",
       align: "center",
@@ -90,8 +94,7 @@ export default function Warehouse() {
           </TableButton>
         </Link>
       ),
-    },
-  ];
+    });
 
   const searchParams = { state };
   category && (searchParams.category = category);
@@ -121,20 +124,23 @@ export default function Warehouse() {
               { value: "defect", label: "Брак" },
             ]}
           />
-          <Link to={PATHS.productsArchive}>
-            <CustomButton type="button" variant="secondary">
-              Архив
-            </CustomButton>
-          </Link>
-          <Link to={PATHS.productsCreate}>
-            <CustomButton type="button" variant="primary">
-              Создать
-            </CustomButton>
-          </Link>
+          {(isDirector || isGuest) && (
+            <Link to={PATHS.productsArchive}>
+              <CustomButton type="button" variant="secondary">
+                Архив
+              </CustomButton>
+            </Link>
+          )}
+          {!isGuest && (
+            <Link to={PATHS.productsCreate}>
+              <CustomButton type="button" variant="primary">
+                Создать
+              </CustomButton>
+            </Link>
+          )}
         </form>
         <ADTable
           headerBg={state === "defect" ? "#ffc2c2" : undefined}
-          //headerBg={state === "Invalid" ? "#ffc2c2" : undefined}
           loading={isLoading}
           dataSource={items}
           rowKey="id"

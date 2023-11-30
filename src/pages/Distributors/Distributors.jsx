@@ -9,11 +9,13 @@ import editIcon from "../../assets/icons/mode_edit.svg";
 import ADTable from "../../components/ADTable/ADTable";
 import { PATHS } from "../../common/constants";
 import renderIndex from "../../utils/renderIndex";
+import usePermissions from "../../hooks/usePermissions";
 
 export default function Distributors() {
   const { distributors, isLoading, error } = useSelector(
     (state) => state.distributors,
   );
+  const { isDirector } = usePermissions();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -50,7 +52,9 @@ export default function Distributors() {
       key: "region",
       align: "left",
     },
-    {
+  ];
+  isDirector &&
+    tableColumns.push({
       title: "Ред.",
       key: "action",
       align: "center",
@@ -65,16 +69,17 @@ export default function Distributors() {
           </TableButton>
         </Link>
       ),
-    },
-  ];
+    });
 
   return (
     <div className={styles.Distributors}>
       <div className="container">
         <div className={styles.filterbar}>
-          <Link to={PATHS.distributorsCreate}>
-            <CustomButton variant="primary">Создать</CustomButton>
-          </Link>
+          {isDirector && (
+            <Link to={PATHS.distributorsCreate}>
+              <CustomButton variant="primary">Создать</CustomButton>
+            </Link>
+          )}
         </div>
 
         <ADTable

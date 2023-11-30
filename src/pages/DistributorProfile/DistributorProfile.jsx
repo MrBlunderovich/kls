@@ -19,6 +19,7 @@ import renderIndex from "../../utils/renderIndex";
 import { CATEGORIES, PATHS } from "../../common/constants";
 import renderUnit from "../../utils/renderUnit";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
+import usePermissions from "../../hooks/usePermissions";
 
 export default function DistributorProfile() {
   const {
@@ -29,8 +30,8 @@ export default function DistributorProfile() {
     endDate,
     category,
     isLoading,
-    error,
   } = useSelector((state) => state.profile);
+  const { isGuest } = usePermissions();
   const dispatch = useDispatch();
   const { id } = useParams();
   const navigate404 = useNavigateReplace();
@@ -203,18 +204,20 @@ export default function DistributorProfile() {
         <main className={styles.mainSection}>
           <div className={styles.infoBlock}>
             <DistributorInfo info={distributorInfo} />
-            <div className={styles.actions}>
-              <Link to={`${PATHS.order}/${id}`}>
-                <CustomButton variant="secondary" width="width140">
-                  Отпускать
-                </CustomButton>
-              </Link>
-              <Link to={`${PATHS.return}/${id}`}>
-                <CustomButton variant="secondary" width="width140">
-                  Возврат
-                </CustomButton>
-              </Link>
-            </div>
+            {!isGuest && (
+              <div className={styles.actions}>
+                <Link to={`${PATHS.order}/${id}`}>
+                  <CustomButton variant="secondary" width="width140">
+                    Отпускать
+                  </CustomButton>
+                </Link>
+                <Link to={`${PATHS.return}/${id}`}>
+                  <CustomButton variant="secondary" width="width140">
+                    Возврат
+                  </CustomButton>
+                </Link>
+              </div>
+            )}
           </div>
 
           <form className={styles.filterbar}>

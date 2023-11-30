@@ -106,6 +106,7 @@ const directorRoutes = (
 );
 
 export default function App() {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
   //FIX_ME:
@@ -136,6 +137,10 @@ export default function App() {
         return publicRoutes;
     }
   } */
+
+  useEffect(() => {
+    dispatch(fetchOptions());
+  }, []);
 
   return (
     <>

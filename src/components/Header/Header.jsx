@@ -1,13 +1,10 @@
 import styles from "./Header.module.css";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Logo from "../Logo/Logo";
 import CustomButton from "../UI/CustomButton/CustomButton";
 import { PATHS } from "../../common/constants";
 
 export default function Header() {
-  //FIX_ME:
-  const navigate = useNavigate();
-
   function getNavlinkClasses({ isActive }) {
     return isActive ? `${styles.navLink} ${styles.active}` : styles.navLink;
   }
@@ -16,10 +13,7 @@ export default function Header() {
     <header className={styles.Header}>
       <div className="container">
         <div className={styles.flexContainer}>
-          <span
-            className={styles.logoWrapper}
-            onClick={() => navigate("/table")}
-          >
+          <span className={styles.logoWrapper}>
             <Logo />
           </span>
           <NavLink className={getNavlinkClasses} to={PATHS.products}>
