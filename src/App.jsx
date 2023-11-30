@@ -30,12 +30,14 @@ const guestRoutes = (
   <>
     <Route path="/" element={<Layout />}>
       <Route index element={<Navigate to={PATHS.products} replace />} />
-
       <Route path={PATHS.products} element={<Warehouse />} />
       <Route path={PATHS.productsArchive} element={<Archive />} />
-
       <Route path={PATHS.distributors} element={<Distributors />} />
       <Route path={PATHS.distributorsArchive} element={<Archive />} />
+      <Route
+        path={PATHS.distributorsProfile + "/:id"}
+        element={<DistributorProfile />}
+      />
     </Route>
 
     <Route path={PATHS.logIn} element={<Navigate to={PATHS.products} />} />
@@ -48,28 +50,17 @@ const guestRoutes = (
 const officerRoutes = (
   <>
     <Route path="/" element={<Layout />}>
-      <Route path="/table" element={<Warehouse_ />} />
-
       <Route index element={<Navigate to={PATHS.products} replace />} />
-
       <Route path={PATHS.products} element={<Warehouse />} />
       <Route path={PATHS.productsArchive} element={<Archive />} />
       <Route path={PATHS.productsCreate} element={<EditProduct />} />
-      <Route path={PATHS.productsEdit + "/:id"} element={<EditProduct />} />
-
       <Route path={PATHS.distributors} element={<Distributors />} />
       <Route
         path={PATHS.distributorsProfile + "/:id"}
         element={<DistributorProfile />}
       />
-      <Route
-        path={PATHS.distributorsEdit + "/:id"}
-        element={<EditDistributor />}
-      />
       <Route path={PATHS.order + "/:id"} element={<Transaction />} />
       <Route path={PATHS.return + "/:id"} element={<Transaction />} />
-      <Route path={PATHS.distributorsCreate} element={<EditDistributor />} />
-      <Route path={PATHS.distributorsArchive} element={<Archive />} />
     </Route>
 
     <Route path={PATHS.logIn} element={<Navigate to={PATHS.products} />} />
@@ -82,6 +73,7 @@ const officerRoutes = (
 const directorRoutes = (
   <>
     <Route path="/" element={<Layout />}>
+      {/* FIX_ME */}
       <Route path="/table" element={<Warehouse_ />} />
 
       <Route index element={<Navigate to={PATHS.products} replace />} />
@@ -116,6 +108,21 @@ const directorRoutes = (
 export default function App() {
   const { user } = useSelector((state) => state.auth);
 
+  //FIX_ME:
+  function getUserRoutes(user) {
+    switch (user) {
+      case "Директор":
+        return directorRoutes;
+      case "Завсклад":
+        return directorRoutes;
+      case "Гость":
+        return directorRoutes;
+
+      default:
+        return publicRoutes;
+    }
+  }
+  /* 
   function getUserRoutes(user) {
     switch (user) {
       case "Директор":
@@ -128,7 +135,7 @@ export default function App() {
       default:
         return publicRoutes;
     }
-  }
+  } */
 
   return (
     <>
