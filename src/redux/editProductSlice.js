@@ -22,7 +22,7 @@ export const postProduct = createAsyncThunk(
       const response = await axiosPrivate.post(`/products/`, formData);
       return response.data;
     } catch (error) {
-      return Promise.reject(error);
+      return Promise.reject(error.request?.responseText || error);
     }
   },
 );
@@ -34,7 +34,7 @@ export const updateProductById = createAsyncThunk(
       const response = await axiosPrivate.put(`/products/${id}/`, formData);
       return response.data;
     } catch (error) {
-      return Promise.reject(error);
+      return Promise.reject(error.request?.responseText || error);
     }
   },
 );
