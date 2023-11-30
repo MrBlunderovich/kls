@@ -16,7 +16,7 @@ import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
 import renderSum from "../../utils/renderSum";
 import renderDate from "../../utils/renderDate";
 import renderIndex from "../../utils/renderIndex";
-import { PATHS } from "../../common/constants";
+import { CATEGORIES, PATHS } from "../../common/constants";
 import renderUnit from "../../utils/renderUnit";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
 
@@ -220,11 +220,7 @@ export default function DistributorProfile() {
           <form className={styles.filterbar}>
             <CustomSelect
               onChange={(value) => dispatch(setCategory(value))}
-              options={[
-                { label: "Все товары", value: "" },
-                { label: "Алкогольное", value: "alcohol" },
-                { label: "Безалкогольное", value: "notAlcohol" },
-              ]}
+              options={[{ label: "Все товары", value: "" }, ...CATEGORIES]}
               className={styles.select}
             />
             <CustomSelect

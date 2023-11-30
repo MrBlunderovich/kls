@@ -20,16 +20,12 @@
   align-items: center;
   gap: 20px;
 
-  & input,
-  & select {
+  & input {
     height: 44px;
-    border-radius: 12px;
+    border-radius: 10px;
     border: 1px solid var(--stroke, #e7e8e7);
     background: #efefef;
     padding-inline: 15px;
-  }
-  & select {
-    min-width: 170px;
   }
 }
 
