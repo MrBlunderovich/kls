@@ -20,6 +20,7 @@ import didFormDataChange from "../../utils/didFormDataChange";
 import showToastError from "../../utils/showToastError";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
 import useEditId from "../../hooks/useEditId";
+import Loader from "../../components/Loader/Loader";
 
 const initialData = {
   name: "",
@@ -116,7 +117,9 @@ export default function EditProduct() {
 
   const loadingPlaceholder = isLoading ? "Загрузка..." : null;
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div className={styles.EditProduct}>
       <div className="narrowContainer">
         <PageHeading

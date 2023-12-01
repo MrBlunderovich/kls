@@ -21,6 +21,7 @@ import useEditId from "../../hooks/useEditId";
 import didFormDataChange from "../../utils/didFormDataChange";
 import showToastError from "../../utils/showToastError";
 import formatPhone from "../../utils/formatPhone";
+import Loader from "../../components/Loader/Loader";
 
 const initialData = {
   photo: null,
@@ -204,7 +205,9 @@ export default function EditDistributor() {
 
   const loadingPlaceholder = isLoading ? "Загрузка..." : null;
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <>
       <div className={styles.EditDistributor}>
         <div className="narrowContainer">

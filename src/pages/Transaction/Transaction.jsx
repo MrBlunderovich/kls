@@ -23,6 +23,7 @@ import showToastError from "../../utils/showToastError";
 import { CATEGORIES, PATHS } from "../../common/constants";
 import CustomModal from "../../components/CustomModal/CustomModal";
 import downloadFile from "../../utils/downloadFile";
+import Loader from "../../components/Loader/Loader";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +43,8 @@ export default function Transaction() {
     target,
     hoverRowId,
     orderNumber,
-    isLoading,
+    isDataLoading,
+    isDistributorLoading,
   } = useSelector((state) => state.transaction);
   const dispatch = useDispatch();
 
@@ -154,7 +156,9 @@ export default function Transaction() {
     };
   }
 
-  return (
+  return isDistributorLoading ? (
+    <Loader />
+  ) : (
     <div className="wideContainer">
       <PageHeading
         buttonText="Назад"
@@ -184,7 +188,7 @@ export default function Transaction() {
             sourceTotalCost={sourceTotalCost}
             targetTotalCost={targetTotalCost}
             hoverRowId={hoverRowId}
-            loading={isLoading}
+            loading={isDataLoading}
             onSave={handleSave}
           />
         ) : (
@@ -196,7 +200,7 @@ export default function Transaction() {
             orderNumber={orderNumber}
             targetTotalCost={targetTotalCost}
             hoverRowId={hoverRowId}
-            loading={isLoading}
+            loading={isDataLoading}
             onSave={handleSave}
           />
         )}

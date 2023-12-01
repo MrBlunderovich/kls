@@ -21,7 +21,7 @@ export const getWarehouseItems = createAsyncThunk(
   `${name}/getWarehouseItems`,
   async (queryParams) => {
     try {
-      const response = await axiosPrivate.get(`/products/?limit=10000`, {
+      const response = await axiosPrivate.get(`/products/`, {
         params: queryParams,
       });
       return response.data;
@@ -107,7 +107,8 @@ export const printReturnById = createAsyncThunk(
 );
 
 const initialState = {
-  isLoading: false,
+  isDataLoading: false,
+  isDistributorLoading: false,
   invoiceNumber: null,
   search: "",
   category: "",
@@ -209,27 +210,29 @@ export const transactionSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getDistributorById.pending, (state) => {
+        state.isDistributorLoading = true;
+      })
       .addCase(getDistributorById.fulfilled, (state, action) => {
+        state.isDistributorLoading = false;
         state.distributor = action.payload;
-      })
-
-      .addCase(getOrdersById.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(getOrdersById.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.source = action.payload;
-      })
-
-      .addCase(getWarehouseItems.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(getWarehouseItems.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.source = action.payload;
       });
+    builder
+      .addCase(getOrdersById.pending, handleDataPending)
+      .addCase(getOrdersById.fulfilled, handleDataFulfilled)
+      .addCase(getWarehouseItems.pending, handleDataPending)
+      .addCase(getWarehouseItems.fulfilled, handleDataFulfilled);
   },
 });
+
+function handleDataFulfilled(state, action) {
+  state.isDataLoading = false;
+  state.source = action.payload;
+}
+
+function handleDataPending(state) {
+  state.isDataLoading = true;
+}
 
 export const transactionReducer = transactionSlice.reducer;
 export const transactionActions = transactionSlice.actions;
