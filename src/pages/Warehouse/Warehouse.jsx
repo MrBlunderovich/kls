@@ -95,7 +95,10 @@ export default function Warehouse() {
       align: "center",
       width: 78,
       render: (_, record) => (
-        <Link to={`${PATHS.productsEdit}/${record.id}`}>
+        <Link
+          to={`${PATHS.productsEdit}/${record.id}`}
+          state={{ isDefect: state === "defect" }}
+        >
           <TableButton>
             <img src={editIcon} alt="edit icon" />
           </TableButton>

@@ -11,8 +11,8 @@ import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
 import { CATEGORIES, PATHS, UNITS } from "../../common/constants";
 import {
   archiveProductById,
+  createProduct,
   getProductById,
-  postProduct,
   productActions,
   updateProductById,
 } from "../../redux/editProductSlice";
@@ -37,13 +37,13 @@ export default function EditProduct() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const dispatch = useDispatch();
   const { originalData, isLoading } = useSelector((state) => state.product);
-  const { id, isEdit } = useEditId();
+  const { id, isEdit, isDefect } = useEditId();
   const navigate404 = useNavigateReplace();
   const navigateToWarehouse = useNavigateReplace(PATHS.products, false);
 
   useEffect(() => {
     if (isEdit) {
-      dispatch(getProductById(id))
+      dispatch(getProductById({ id, isDefect }))
         .unwrap()
         .then(setFormData)
         .catch(navigate404);
@@ -66,23 +66,23 @@ export default function EditProduct() {
   function handleConfirmSave() {
     setShowSaveModal(false);
     if (isEdit) {
-      dispatch(updateProductById({ id, formData }))
+      dispatch(updateProductById({ id, formData, isDefect }))
         .unwrap()
         .then(() => toast.success("Товар успешно сохранен"))
         .then(navigateToWarehouse)
         .catch(showToastError);
-      return;
+    } else {
+      dispatch(createProduct(formData))
+        .unwrap()
+        .then(() => toast.success("Товар успешно создан"))
+        .then(navigateToWarehouse)
+        .catch(showToastError);
     }
-    dispatch(postProduct(formData))
-      .unwrap()
-      .then(() => toast.success("Товар успешно создан"))
-      .then(navigateToWarehouse)
-      .catch(showToastError);
   }
 
   function handleConfirmDelete() {
     setShowDeleteModal(false);
-    dispatch(archiveProductById(id))
+    dispatch(archiveProductById({ id, isDefect }))
       .unwrap()
       .then(() => toast.success("Товар успешно удален"))
       .then(navigateToWarehouse)

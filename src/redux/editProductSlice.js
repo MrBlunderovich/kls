@@ -5,9 +5,10 @@ const name = "product";
 
 export const getProductById = createAsyncThunk(
   `${name}/getProductById`,
-  async (id) => {
+  async ({ id, isDefect }) => {
+    const suffix = isDefect ? "defect/" : "";
     try {
-      const response = await axiosPrivate.get(`/products/${id}/`);
+      const response = await axiosPrivate.get(`/products/${suffix}${id}/`);
       return response.data;
     } catch (error) {
       return Promise.reject(error);
@@ -15,8 +16,8 @@ export const getProductById = createAsyncThunk(
   },
 );
 
-export const postProduct = createAsyncThunk(
-  `${name}/postProduct`,
+export const createProduct = createAsyncThunk(
+  `${name}/createProduct`,
   async (formData) => {
     try {
       const response = await axiosPrivate.post(`/products/`, formData);
@@ -28,10 +29,14 @@ export const postProduct = createAsyncThunk(
 );
 
 export const updateProductById = createAsyncThunk(
-  `${name}/updateProductById`,
-  async ({ id, formData }) => {
+  `${name}/updateNormalProductById`,
+  async ({ id, formData, isDefect }) => {
+    const suffix = isDefect ? "defect/" : "";
     try {
-      const response = await axiosPrivate.put(`/products/${id}/`, formData);
+      const response = await axiosPrivate.put(
+        `/products/${suffix}${id}/`,
+        formData,
+      );
       return response.data;
     } catch (error) {
       return Promise.reject(error.request?.responseText || error);
@@ -41,9 +46,10 @@ export const updateProductById = createAsyncThunk(
 
 export const archiveProductById = createAsyncThunk(
   `${name}/archiveProductById`,
-  async (id) => {
+  async ({ id, isDefect }) => {
+    const suffix = isDefect ? "defect/" : "";
     try {
-      const response = await axiosPrivate.delete(`/products/${id}/`);
+      const response = await axiosPrivate.delete(`/products/${suffix}${id}/`);
       return response.data;
     } catch (error) {
       return Promise.reject(error);
@@ -67,7 +73,7 @@ const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getProductById.pending, (state, action) => {
+      .addCase(getProductById.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(getProductById.fulfilled, (state, action) => {
