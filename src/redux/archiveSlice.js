@@ -35,32 +35,26 @@ export const restoreItemById = createAsyncThunk(
 const initialState = {
   items: [],
   isLoading: false,
-  error: null,
 };
 
 export const archiveSlice = createSlice({
   name,
   initialState,
   reducers: {
-    clearData: (state, action) => {
-      state.items = [];
-      state.isLoading = false;
-      state.error = null;
+    clearData: () => {
+      return initialState;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchArchiveItems.pending, (state, action) => {
-      state.error = null;
+    builder.addCase(fetchArchiveItems.pending, (state) => {
       state.isLoading = true;
     });
     builder.addCase(fetchArchiveItems.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.error = null;
       state.items = action.payload;
     });
-    builder.addCase(fetchArchiveItems.rejected, (state, action) => {
+    builder.addCase(fetchArchiveItems.rejected, (state) => {
       state.isLoading = false;
-      state.error = action.error.message;
     });
   },
 });

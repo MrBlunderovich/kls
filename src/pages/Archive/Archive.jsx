@@ -28,7 +28,7 @@ export default function Archive() {
   const location = useLocation();
   const navigate = useNavigate();
   const isWarehouse = location.pathname.includes(PATHS.products);
-  const { items, isLoading, error } = useSelector((state) => state.archive);
+  const { items, isLoading } = useSelector((state) => state.archive);
 
   const total =
     isWarehouse &&
@@ -55,10 +55,6 @@ export default function Archive() {
       .then(() => navigate(destination || "../"))
       .catch(showToastError);
   }
-
-  ///////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////
 
   const distributorColumns = [
     {
@@ -177,10 +173,6 @@ export default function Archive() {
       ),
     },
   ];
-
-  ///////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////
 
   return (
     <div className={styles.Archive}>
