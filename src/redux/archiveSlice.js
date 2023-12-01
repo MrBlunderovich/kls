@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
+import showToastLoader from "../utils/showToastLoader";
 
 const name = "archive";
 
@@ -21,7 +22,9 @@ export const restoreItemById = createAsyncThunk(
   `${name}/restoreItemById`,
   async ({ entity, id }) => {
     try {
-      const response = await axiosPrivate.delete(`/${entity}/archive/${id}/`);
+      const response = await showToastLoader(
+        axiosPrivate.delete(`/${entity}/archive/${id}/`),
+      );
       return response.data;
     } catch (error) {
       return Promise.reject(error);
