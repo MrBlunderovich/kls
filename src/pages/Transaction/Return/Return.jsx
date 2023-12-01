@@ -34,7 +34,6 @@ export default function Return({
   targetTotalCost,
   loading,
   onSave,
-  onPrint,
 }) {
   const dispatch = useDispatch();
 
@@ -50,9 +49,7 @@ export default function Return({
     },
     {
       title: "Наименование",
-      //dataIndex: "name",
-      //FIX_ME:
-      dataIndex: "product_name",
+      dataIndex: "name",
       key: "name",
       align: "left",
       ellipsis: true,
@@ -83,9 +80,7 @@ export default function Return({
     },
     {
       title: "Цена",
-      //dataIndex: "price",
-      //FIX_ME:
-      dataIndex: "product_price",
+      dataIndex: "price",
       key: "price",
       align: "left",
       width: S_PRICE_WIDTH,
@@ -99,9 +94,7 @@ export default function Return({
     },
     {
       title: "Дата",
-      //dataIndex: "order_date",
-      //FIX_ME:
-      dataIndex: "created_at",
+      dataIndex: "sale_date",
       align: "left",
       width: S_DATE_WIDTH,
       ellipsis: true,
@@ -137,9 +130,7 @@ export default function Return({
     },
     {
       title: "Наименование",
-      //dataIndex: "name",
-      //FIX_ME:
-      dataIndex: "product_name",
+      dataIndex: "name",
       key: "name",
       align: "left",
       ellipsis: true,
@@ -179,9 +170,7 @@ export default function Return({
     },
     {
       title: "Цена",
-      //dataIndex: "price",
-      //FIX_ME:
-      dataIndex: "product_price",
+      dataIndex: "price",
       align: "left",
       width: S_PRICE_WIDTH,
     },
@@ -193,9 +182,7 @@ export default function Return({
     },
     {
       title: "Дата",
-      //dataIndex: "order_date",
-      //FIX_ME:
-      dataIndex: "created_at",
+      dataIndex: "sale_date",
       align: "left",
       width: S_DATE_WIDTH,
       ellipsis: true,

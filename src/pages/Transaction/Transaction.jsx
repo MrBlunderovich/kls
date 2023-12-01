@@ -12,6 +12,8 @@ import {
   getWarehouseItems,
   postOrderById,
   printOrderById,
+  postReturnById,
+  printReturnById,
 } from "../../redux/transactionSlice";
 import Order from "./Order/Order";
 import Return from "./Return/Return";
@@ -94,31 +96,38 @@ export default function Transaction() {
   function handleConfirmSave() {
     // ---------------------------------оформление возврата
     if (isReturn) {
-      dispatch(postOrderById(composeReturnData()))
+      dispatch(postReturnById(composeReturnData()))
         .unwrap()
-        .then(() => {
+        .then((data) => {
           toast.success(`Возврат успешно сохранен`);
-          return invoiceId;
+          return data.id;
         })
+        .then((returnId) =>
+          dispatch(printReturnById(returnId))
+            .unwrap()
+            .then(downloadFile)
+            .catch(showToastError),
+        )
+        .then(navigateToProfile)
+        .catch(showToastError);
+    } else {
+      // ---------------------------------оформление заказа
+      dispatch(postOrderById(composeOrderData()))
+        .unwrap()
+        .then((data) => {
+          const orderNumber = data.identification_number_invoice;
+          toast.success(`Заказ №${orderNumber} успешно сохранен`);
+          return data.id;
+        })
+        .then((invoiceId) =>
+          dispatch(printOrderById(invoiceId))
+            .unwrap()
+            .then(downloadFile)
+            .catch(showToastError),
+        )
         .then(navigateToProfile)
         .catch(showToastError);
     }
-    // ---------------------------------оформление заказа
-    dispatch(postOrderById(composeOrderData()))
-      .unwrap()
-      .then((data) => {
-        const orderNumber = data.identification_number_invoice;
-        toast.success(`Заказ №${orderNumber} успешно сохранен`);
-        return data.id;
-      })
-      .then((invoiceId) =>
-        dispatch(printOrderById(invoiceId))
-          .unwrap()
-          .then(downloadFile)
-          .catch(showToastError),
-      )
-      .then(navigateToProfile)
-      .catch(showToastError);
   }
 
   function composeOrderData() {
@@ -134,8 +143,14 @@ export default function Transaction() {
 
   function composeReturnData() {
     return {
-      ...composeOrderData(),
-      is_return: true,
+      distributor: id,
+      //FIX_ME:
+      identification_number_return: Math.floor(Math.random() * 1000000),
+      products_return_invoice: target.map((item) => ({
+        product_id: item.id,
+        quantity: item.quantity,
+        state: item.state,
+      })),
     };
   }
 

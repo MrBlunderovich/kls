@@ -77,6 +77,35 @@ export const printOrderById = createAsyncThunk(
   },
 );
 
+export const postReturnById = createAsyncThunk(
+  `${name}/postReturnById`,
+  async (data) => {
+    try {
+      const response = await showToastLoader(
+        axiosPrivate.post(`/transactions/return_invoices/`, data),
+      );
+      return response.data;
+    } catch (error) {
+      return Promise.reject(error.request?.responseText || error);
+    }
+  },
+);
+
+export const printReturnById = createAsyncThunk(
+  `${name}/printReturnById`,
+  async (id) => {
+    try {
+      const response = await axiosPrivate.get(
+        `/transactions/generate_return_pdf/${id}/`,
+        { responseType: "blob" },
+      );
+      return response.data;
+    } catch (error) {
+      return Promise.reject(error.request?.responseText || error);
+    }
+  },
+);
+
 const initialState = {
   isLoading: false,
   invoiceNumber: null,
