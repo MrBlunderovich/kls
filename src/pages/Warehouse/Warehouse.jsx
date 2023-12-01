@@ -6,7 +6,8 @@ import CustomButton from "../../components/UI/CustomButton/CustomButton";
 import editIcon from "../../assets/icons/mode_edit.svg";
 import TableButton from "../../components/UI/TableButton/TableButton";
 import {
-  fetchWarehouseItems,
+  getDefectProducts,
+  getNormalProducts,
   warehouseActions,
 } from "../../redux/warehouseSlice";
 import ADTable from "../../components/ADTable/ADTable";
@@ -20,16 +21,22 @@ import usePermissions from "../../hooks/usePermissions";
 
 export default function Warehouse() {
   const { setCategory, setCondition, setSearch } = warehouseActions;
-  const { items, isLoading, error, search, category, state } = useSelector(
+  const { items, isLoading, search, category, state } = useSelector(
     (state) => state.warehouse,
   );
   const { isDirector, isGuest } = usePermissions();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchWarehouseItems({ search_query: search, category, state }))
-      .unwrap()
-      .catch(showToastError);
+    if (state === "defect") {
+      dispatch(getDefectProducts({ search_query: search, category }))
+        .unwrap()
+        .catch(showToastError);
+    } else {
+      dispatch(getNormalProducts({ search_query: search, category }))
+        .unwrap()
+        .catch(showToastError);
+    }
   }, [search, category, state]);
 
   useEffect(() => {

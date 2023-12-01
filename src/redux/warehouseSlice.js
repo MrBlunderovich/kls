@@ -3,11 +3,25 @@ import { axiosPrivate } from "../api/axiosPrivate";
 
 const name = "warehouse";
 
-export const fetchWarehouseItems = createAsyncThunk(
-  `${name}/fetchWarehouseItems`,
+export const getNormalProducts = createAsyncThunk(
+  `${name}/getNormalProducts`,
   async (queryParams) => {
     try {
-      const response = await axiosPrivate.get(`/products/?limit=10000`, {
+      const response = await axiosPrivate.get(`/products/`, {
+        params: queryParams,
+      });
+      return response.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
+);
+
+export const getDefectProducts = createAsyncThunk(
+  `${name}/getDefectProducts`,
+  async (queryParams) => {
+    try {
+      const response = await axiosPrivate.get(`/products/defect/`, {
         params: queryParams,
       });
       return response.data;
@@ -23,7 +37,6 @@ const initialState = {
   state: "normal",
   items: [],
   isLoading: false,
-  error: null,
 };
 
 export const warehouseSlice = createSlice({
@@ -44,21 +57,21 @@ export const warehouseSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchWarehouseItems.pending, (state, action) => {
-      state.error = null;
-      state.isLoading = true;
-    });
-    builder.addCase(fetchWarehouseItems.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.error = null;
-      state.items = action.payload;
-    });
-    builder.addCase(fetchWarehouseItems.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error.message;
-    });
+    builder.addCase(getNormalProducts.pending, handlePending);
+    builder.addCase(getNormalProducts.fulfilled, handleFulfilled);
+    builder.addCase(getDefectProducts.pending, handlePending);
+    builder.addCase(getDefectProducts.fulfilled, handleFulfilled);
   },
 });
+
+function handlePending(state) {
+  state.isLoading = true;
+}
+
+function handleFulfilled(state, action) {
+  state.isLoading = false;
+  state.items = action.payload;
+}
 
 export const warehouseReducer = warehouseSlice.reducer;
 export const warehouseActions = warehouseSlice.actions;
