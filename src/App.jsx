@@ -16,8 +16,6 @@ import Archive from "./pages/Archive/Archive";
 import Logout from "./pages/Logout/Logout";
 import NotFound from "./pages/NotFound/NotFound";
 import Transaction from "./pages/Transaction/Transaction";
-//FIX_ME:
-import Warehouse_ from "./experimental_pages/ExperimentalWarehouse/Warehouse_";
 import { PATHS } from "./common/constants";
 
 const publicRoutes = (
@@ -74,9 +72,6 @@ const officerRoutes = (
 const directorRoutes = (
   <>
     <Route path="/" element={<Layout />}>
-      {/* FIX_ME */}
-      <Route path="/table" element={<Warehouse_ />} />
-
       <Route index element={<Navigate to={PATHS.products} replace />} />
 
       <Route path={PATHS.products} element={<Warehouse />} />
