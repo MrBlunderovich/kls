@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
-import { axiosDummy } from "../api/axiosDummy";
 import yearLimiter from "../utils/yearLimiter";
 
 const name = "profile";
@@ -35,13 +34,16 @@ export const getOrderHistoryById = createAsyncThunk(
   },
 );
 
-export const fetchItems = createAsyncThunk(
-  `${name}/fetchItems`,
-  async ({ id, queryParams, target }, thunkAPI) => {
+export const getReturnHistoryById = createAsyncThunk(
+  `${name}/getReturnHistoryById`,
+  async ({ id, queryParams }) => {
     try {
-      const response = await axiosDummy.get(`/distributor/${target}/${id}`, {
-        params: queryParams,
-      });
+      const response = await axiosPrivate.get(
+        `transactions/return/distributor/${id}`,
+        {
+          params: queryParams,
+        },
+      );
       return response.data;
     } catch (error) {
       return Promise.reject(error);
@@ -62,8 +64,8 @@ const initialState = {
   startDate: "",
   endDate: "",
   data: [],
-  isLoading: false,
-  error: null,
+  isDistributorLoading: false,
+  isDataLoading: false,
 };
 export const profileSlice = createSlice({
   name,
@@ -89,48 +91,39 @@ export const profileSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getDistributorById.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
+        state.isDistributorLoading = true;
       })
       .addCase(getDistributorById.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isDistributorLoading = false;
         state.distributorInfo = action.payload;
       })
-      .addCase(getDistributorById.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error =
-          action.payload || "Не удалось загрузить данные о дистрибьюторе";
+      .addCase(getDistributorById.rejected, (state) => {
+        state.isDistributorLoading = false;
       });
 
     builder
-      .addCase(getOrderHistoryById.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(getOrderHistoryById.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.data = action.payload;
-      })
-      .addCase(getOrderHistoryById.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload || "Не удалось загрузить историю";
-      });
-
+      .addCase(getOrderHistoryById.pending, handleDataPending)
+      .addCase(getOrderHistoryById.fulfilled, handleDataFulfilled)
+      .addCase(getOrderHistoryById.rejected, handleDataRejected);
     builder
-      .addCase(fetchItems.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(fetchItems.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.data = action.payload;
-      })
-      .addCase(fetchItems.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload || "Не удалось загрузить историю";
-      });
+      .addCase(getReturnHistoryById.pending, handleDataPending)
+      .addCase(getReturnHistoryById.fulfilled, handleDataFulfilled)
+      .addCase(getReturnHistoryById.rejected, handleDataRejected);
   },
 });
+
+function handleDataPending(state) {
+  state.isDataLoading = true;
+}
+
+function handleDataFulfilled(state, action) {
+  state.isDataLoading = false;
+  state.data = action.payload;
+}
+
+function handleDataRejected(state) {
+  state.isDataLoading = false;
+}
 
 export const profileReducer = profileSlice.reducer;
 export const profileActions = profileSlice.actions;

@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchItems,
   getDistributorById,
   getOrderHistoryById,
+  getReturnHistoryById,
   profileActions,
 } from "../../redux/profileSlice";
 import PageHeading from "../../components/PageHeading/PageHeading";
@@ -29,7 +29,8 @@ export default function DistributorProfile() {
     startDate,
     endDate,
     category,
-    isLoading,
+    isDistributorLoading,
+    isDataLoading,
   } = useSelector((state) => state.profile);
   const { isGuest } = usePermissions();
   const dispatch = useDispatch();
@@ -53,7 +54,7 @@ export default function DistributorProfile() {
   useEffect(() => {
     if (isReturns) {
       dispatch(
-        fetchItems({
+        getReturnHistoryById({
           id,
           queryParams,
           target: "returns",
@@ -80,7 +81,7 @@ export default function DistributorProfile() {
     },
     {
       title: "Наименование",
-      dataIndex: "product_name",
+      dataIndex: "name",
       align: "left",
       ellipsis: true,
     },
@@ -105,7 +106,7 @@ export default function DistributorProfile() {
     },
     {
       title: "Цена",
-      dataIndex: "product_price",
+      dataIndex: "price",
       align: "left",
       width: 100,
     },
@@ -118,7 +119,7 @@ export default function DistributorProfile() {
     },
     {
       title: "Дата продажи",
-      dataIndex: "created_at",
+      dataIndex: "sale_date",
       align: "left",
       width: 120,
       render: renderDate,
@@ -173,7 +174,7 @@ export default function DistributorProfile() {
     },
     {
       title: "Дата продажи",
-      dataIndex: "order_date",
+      dataIndex: "sale_date",
       align: "left",
       width: 120,
       render: renderDate,
@@ -193,6 +194,9 @@ export default function DistributorProfile() {
     },
   ];
 
+  /* return isDistributorLoading ? (
+    "loading..."
+  ) : ( */
   return (
     <div className={styles.DistributorProfile}>
       <div className="container">
@@ -260,7 +264,7 @@ export default function DistributorProfile() {
           </form>
           <ADTable
             headerBg={isReturns ? "#ffc2c2" : undefined}
-            loading={isLoading}
+            loading={isDataLoading}
             dataSource={data}
             rowKey="id"
             columns={isReturns ? returnColumns : orderColumns}

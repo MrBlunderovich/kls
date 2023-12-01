@@ -7,6 +7,6 @@ export default function useEditId() {
   const { pathname, state } = useLocation();
   const isEdit = pathname.match("edit");
   if (isEdit && !id) navigate404();
-  const isDefect = state.isDefect;
+  const isDefect = state?.isDefect;
   return { id, isEdit, isDefect };
 }
