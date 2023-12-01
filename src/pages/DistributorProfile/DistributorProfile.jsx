@@ -20,6 +20,7 @@ import { CATEGORIES, PATHS } from "../../common/constants";
 import renderUnit from "../../utils/renderUnit";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
 import usePermissions from "../../hooks/usePermissions";
+import Loader from "../../components/Loader/Loader";
 
 export default function DistributorProfile() {
   const {
@@ -194,10 +195,9 @@ export default function DistributorProfile() {
     },
   ];
 
-  /* return isDistributorLoading ? (
-    "loading..."
-  ) : ( */
-  return (
+  return isDistributorLoading ? (
+    <Loader />
+  ) : (
     <div className={styles.DistributorProfile}>
       <div className="container">
         <PageHeading
