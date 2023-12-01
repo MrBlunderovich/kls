@@ -103,7 +103,8 @@ export default function Warehouse() {
       ),
     });
 
-  const searchParams = { state };
+  //const searchParams = { state };
+  const searchParams = {};
   category && (searchParams.category = category);
 
   return (

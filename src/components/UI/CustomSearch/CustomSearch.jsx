@@ -31,23 +31,22 @@ export default function CustomSearch({
     async function getSearchMatches() {
       try {
         const response = await axiosPrivate.get(
-          `/products/tip/?search=${debouncedSearch}`,
+          `/products/search/?search=${debouncedSearch}`,
         );
-        const options = response.data.results
+        const options = response.data
           .filter((item) => {
             return Object.keys(params).reduce(
               (acc, key) => acc * (item[key] === params[key]),
               true,
             );
           })
-          .map((item) => item.name);
-        const uniqueOptions = [...new Set(options)].map((item) => ({
-          label: item,
-          value: item,
-        }));
-        setOptions(uniqueOptions);
+          .map((item) => ({
+            label: item.name,
+            value: item.name,
+          }));
+        setOptions(options);
       } catch (error) {
-        return error;
+        console.error(error);
       }
     }
 
