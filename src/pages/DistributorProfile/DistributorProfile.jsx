@@ -21,6 +21,7 @@ import renderUnit from "../../utils/renderUnit";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
 import usePermissions from "../../hooks/usePermissions";
 import Loader from "../../components/Loader/Loader";
+import renderCondition from "../../utils/renderCondition";
 
 export default function DistributorProfile() {
   const {
@@ -192,6 +193,7 @@ export default function DistributorProfile() {
       dataIndex: "state",
       align: "left",
       width: 100,
+      render: renderCondition,
     },
   ];
 
