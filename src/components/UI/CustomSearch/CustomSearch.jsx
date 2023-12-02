@@ -3,13 +3,14 @@ import searchIcon from "../../../assets/icons/search.svg";
 import clearIcon from "../../../assets/icons/clear.svg";
 import { useEffect, useState } from "react";
 import Dropdown from "../Dropdown/Dropdown";
-import { SEARCH_DEBOUNCE_DELAY } from "../../../common/constants";
+import { ENDPOINTS, SEARCH_DEBOUNCE_DELAY } from "../../../common/constants";
 import { useDebounce } from "../../../hooks/useDebounce";
 import { axiosPrivate } from "../../../api/axiosPrivate";
 
 export default function CustomSearch({
   className,
   placeholder = "Поиск...",
+  endpoint = undefined,
   params = {},
   delay = SEARCH_DEBOUNCE_DELAY || 700,
   onSearch = () => undefined,
@@ -19,42 +20,9 @@ export default function CustomSearch({
   const [active, setActive] = useState(true);
   const debouncedSearch = useDebounce(search, delay);
 
-  useEffect(() => {
-    if (debouncedSearch === "") {
-      setOptions([]);
-      return;
-    }
-    if (!active) {
-      return;
-    }
-
-    async function getSearchMatches() {
-      try {
-        const response = await axiosPrivate.get(
-          `/products/search/?search=${debouncedSearch}`,
-        );
-        const options = response.data
-          .filter((item) => {
-            return Object.keys(params).reduce(
-              (acc, key) => acc * (item[key] === params[key]),
-              true,
-            );
-          })
-          .map((item) => ({
-            label: item.name,
-            value: item.name,
-          }));
-        setOptions(options);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    getSearchMatches();
-  }, [debouncedSearch]);
-
   function handleKeyDown(event) {
     if (event.key === "Enter") {
+      setOptions([]);
       onSearch(debouncedSearch);
     }
     if (event.key === "Escape") {
@@ -85,6 +53,40 @@ export default function CustomSearch({
     setSearch(event.target.value);
     setActive(true);
   }
+
+  async function getSearchMatches() {
+    try {
+      const response = await axiosPrivate.get(
+        `${endpoint}/?search=${debouncedSearch}`,
+      );
+      const options = response.data
+        .filter((item) => {
+          return Object.keys(params).reduce(
+            (acc, key) => acc * (item[key] === params[key]),
+            true,
+          );
+        })
+        .map((item) => ({
+          label: item.name,
+          value: item.name,
+        }));
+      setOptions(options);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    if (!endpoint || debouncedSearch === "") {
+      setOptions([]);
+      return;
+    }
+    if (!active) {
+      return;
+    }
+
+    getSearchMatches();
+  }, [debouncedSearch]);
 
   return (
     <span className={`${styles.CustomSearch} ${className}`}>

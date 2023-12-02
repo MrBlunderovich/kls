@@ -15,7 +15,7 @@ import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
 import CustomSearch from "../../components/UI/CustomSearch/CustomSearch";
 import renderIndex from "../../utils/renderIndex";
 import renderUnit from "../../utils/renderUnit";
-import { CATEGORIES, PATHS } from "../../common/constants";
+import { CATEGORIES, ENDPOINTS, PATHS } from "../../common/constants";
 import showToastError from "../../utils/showToastError";
 import usePermissions from "../../hooks/usePermissions";
 
@@ -26,22 +26,7 @@ export default function Warehouse() {
   );
   const { isDirector, isGuest } = usePermissions();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (state === "defect") {
-      dispatch(getDefectProducts({ search_query: search, category }))
-        .unwrap()
-        .catch(showToastError);
-    } else {
-      dispatch(getNormalProducts({ search_query: search, category }))
-        .unwrap()
-        .catch(showToastError);
-    }
-  }, [search, category, state]);
-
-  useEffect(() => {
-    return () => dispatch(warehouseActions.clearData());
-  }, []);
+  const isDefect = state === "defect";
 
   const tableColumns = [
     {
@@ -106,16 +91,33 @@ export default function Warehouse() {
       ),
     });
 
-  //const searchParams = { state };
-  const searchParams = {};
-  category && (searchParams.category = category);
+  useEffect(() => {
+    if (isDefect) {
+      dispatch(getDefectProducts({ search_query: search, category }))
+        .unwrap()
+        .catch(showToastError);
+    } else {
+      dispatch(getNormalProducts({ search_query: search, category }))
+        .unwrap()
+        .catch(showToastError);
+    }
+  }, [search, category, state]);
+
+  useEffect(() => {
+    return () => dispatch(warehouseActions.clearData());
+  }, []);
 
   return (
     <div className={styles.Warehouse}>
       <div className="container">
         <form className={styles.filterbar}>
           <CustomSearch
-            params={searchParams}
+            endpoint={
+              isDefect
+                ? ENDPOINTS.defectProductSearchTips
+                : ENDPOINTS.productSearchTips
+            }
+            params={category && { category }}
             onSearch={(value) => dispatch(setSearch(value))}
           />
           <CustomSelect

@@ -1,8 +1,10 @@
 export const BASE_URL = "http://134.209.252.52:83/api/v1/";
-//export const BASE_URL = "https://beerhouse.vercel.app/api/";
 
 export const ENDPOINTS = {
   login: "/users/login/",
+  productSearchTips: "/products/search",
+  defectProductSearchTips: "/products/search",
+  historySearchTips: undefined,
 };
 
 export const UNITS = [

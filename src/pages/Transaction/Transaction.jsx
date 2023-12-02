@@ -20,7 +20,7 @@ import Return from "./Return/Return";
 import useReturnId from "../../hooks/useReturnId";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
 import showToastError from "../../utils/showToastError";
-import { CATEGORIES, PATHS } from "../../common/constants";
+import { CATEGORIES, ENDPOINTS, PATHS } from "../../common/constants";
 import CustomModal from "../../components/CustomModal/CustomModal";
 import downloadFile from "../../utils/downloadFile";
 import Loader from "../../components/Loader/Loader";
@@ -175,6 +175,10 @@ export default function Transaction() {
         />
         <CustomSearch
           className={styles.searchField}
+          endpoint={
+            isReturn ? ENDPOINTS.historySearchTips : ENDPOINTS.productSearchTips
+          }
+          params={category && { category }}
           onSearch={(value) => dispatch(transactionActions.setSearch(value))}
         />
       </PageHeading>
