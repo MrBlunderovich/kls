@@ -2,7 +2,7 @@ import styles from "./Login.module.css";
 import eyeIconShow from "../../assets/icons/eye.svg";
 import eyeIconHide from "../../assets/icons/eyeslash.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { authActions, logUserIn } from "../../redux/authSlice";
 import { ACCESS_DENIED_ERROR, TRY_AGAIN_ERROR } from "../../common/constants";
 import CustomButton from "../../components/UI/CustomButton/CustomButton";
@@ -13,7 +13,6 @@ export default function Login() {
   const [hidePassword, setHidePassword] = useState(true);
   const { error, isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const formRef = useRef(null);
   const fieldsAreEmpty = !username || !password;
 
   function handleSubmit(event) {
@@ -24,10 +23,6 @@ export default function Login() {
     };
     dispatch(logUserIn(formData));
   }
-
-  useEffect(() => {
-    formRef.current?.login.focus();
-  }, []);
 
   useEffect(() => {
     dispatch(authActions.clearError());
@@ -42,7 +37,7 @@ export default function Login() {
 
   return (
     <div className={styles.LoginPage}>
-      <form className={styles.form} ref={formRef} onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <h2 className={styles.heading}>Авторизация</h2>
         {/*  */}
         <label className={styles.label}>
@@ -55,6 +50,7 @@ export default function Login() {
             onChange={(event) => setLogin(event.target.value)}
             autoComplete="off"
             disabled={error === ACCESS_DENIED_ERROR}
+            autoFocus={true}
           />
         </label>
         {/*  */}
@@ -79,7 +75,6 @@ export default function Login() {
             />
           </div>
         </label>
-        {/*  */}
         <CustomButton
           className={styles.submitButton}
           width="full"

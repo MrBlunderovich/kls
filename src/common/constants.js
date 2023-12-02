@@ -34,8 +34,8 @@ export const PATHS = {
   logOut: "/logout",
 };
 
-export const TRY_AGAIN_ERROR = "try_again";
-export const ACCESS_DENIED_ERROR = "access_denied";
+export const TRY_AGAIN_ERROR = "Request failed with status code 400";
+export const ACCESS_DENIED_ERROR = "Request failed with status code 429";
 
 export const SEARCH_DEBOUNCE_DELAY = 700;
 

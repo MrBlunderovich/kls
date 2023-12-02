@@ -6,7 +6,7 @@ const name = "auth";
 
 export const logUserIn = createAsyncThunk(
   `${name}/logUserIn`,
-  async (formData) => {
+  async (formData, { rejectWithValue }) => {
     try {
       const response = await axiosPublic.post(ENDPOINTS.login, formData);
       const data = response.data;
@@ -16,7 +16,7 @@ export const logUserIn = createAsyncThunk(
       return data;
     } catch (error) {
       localStorage.clear();
-      return Promise.reject(error);
+      return rejectWithValue(error.message);
     }
   },
 );
@@ -48,7 +48,7 @@ export const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(logUserIn.pending, (state, action) => {
+    builder.addCase(logUserIn.pending, (state) => {
       state.isLoading = true;
       state.error = null;
     });
@@ -59,11 +59,12 @@ export const authSlice = createSlice({
     builder.addCase(logUserIn.rejected, (state, action) => {
       state.isLoading = false;
       state.user = null;
-      state.error = "try_again";
+      state.error = action.payload;
     });
-    builder.addCase(logUserOut.fulfilled, (state, action) => {
+    builder.addCase(logUserOut.fulfilled, (state) => {
       state.user = null;
       state.isLoading = false;
+      state.error = null;
     });
   },
 });
