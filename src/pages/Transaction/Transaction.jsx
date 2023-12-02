@@ -148,7 +148,7 @@ export default function Transaction() {
       distributor: id,
       //FIX_ME:
       identification_number_return: Math.floor(Math.random() * 1000000),
-      products_return_invoice: target.map((item) => ({
+      return_product: target.map((item) => ({
         product_id: item.id,
         quantity: item.quantity,
         state: item.state,
