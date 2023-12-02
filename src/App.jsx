@@ -17,7 +17,8 @@ import Logout from "./pages/Logout/Logout";
 import NotFound from "./pages/NotFound/NotFound";
 import Transaction from "./pages/Transaction/Transaction";
 import { PATHS } from "./common/constants";
-import usePermissions from "./hooks/usePermissions";
+import DirectorOrOfficer from "./components/Routing/DirectorOrOfficer";
+import DirectorOnly from "./components/Routing/DirectorOnly";
 
 const publicRoutes = (
   <>
@@ -113,21 +114,5 @@ export default function App() {
       />
       <Routes>{user ? privateRoutes : publicRoutes}</Routes>
     </>
-  );
-}
-
-function DirectorOnly({ children }) {
-  const { isDirector } = usePermissions();
-
-  return isDirector ? children : <Navigate to={PATHS.notFound} replace />;
-}
-
-function DirectorOrOfficer({ children }) {
-  const { isOfficer, isDirector } = usePermissions();
-
-  return isDirector || isOfficer ? (
-    children
-  ) : (
-    <Navigate to={PATHS.notFound} replace />
   );
 }
