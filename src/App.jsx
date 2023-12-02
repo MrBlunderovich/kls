@@ -17,6 +17,7 @@ import Logout from "./pages/Logout/Logout";
 import NotFound from "./pages/NotFound/NotFound";
 import Transaction from "./pages/Transaction/Transaction";
 import { PATHS } from "./common/constants";
+import usePermissions from "./hooks/usePermissions";
 
 const publicRoutes = (
   <>
@@ -25,73 +26,67 @@ const publicRoutes = (
   </>
 );
 
-const guestRoutes = (
+const privateRoutes = (
   <>
     <Route path="/" element={<Layout />}>
       <Route index element={<Navigate to={PATHS.products} replace />} />
       <Route path={PATHS.products} element={<Warehouse />} />
-      <Route path={PATHS.productsArchive} element={<Archive />} />
       <Route path={PATHS.distributors} element={<Distributors />} />
+      <Route path={PATHS.productsArchive} element={<Archive />} />
       <Route path={PATHS.distributorsArchive} element={<Archive />} />
       <Route
         path={PATHS.distributorsProfile + "/:id"}
         element={<DistributorProfile />}
       />
-    </Route>
 
-    <Route path={PATHS.logIn} element={<Navigate to={PATHS.products} />} />
-    <Route path={PATHS.logOut} element={<Logout />} />
-    <Route path="*" element={<Navigate to={PATHS.notFound} replace />} />
-    <Route path={PATHS.notFound} element={<NotFound />} />
-  </>
-);
-
-const officerRoutes = (
-  <>
-    <Route path="/" element={<Layout />}>
-      <Route index element={<Navigate to={PATHS.products} replace />} />
-      <Route path={PATHS.products} element={<Warehouse />} />
-      <Route path={PATHS.productsArchive} element={<Archive />} />
-      <Route path={PATHS.productsCreate} element={<EditProduct />} />
-      <Route path={PATHS.distributors} element={<Distributors />} />
       <Route
-        path={PATHS.distributorsProfile + "/:id"}
-        element={<DistributorProfile />}
+        path={PATHS.productsCreate}
+        element={
+          <DirectorOrOfficer>
+            <EditProduct />
+          </DirectorOrOfficer>
+        }
       />
-      <Route path={PATHS.order + "/:id"} element={<Transaction />} />
-      <Route path={PATHS.return + "/:id"} element={<Transaction />} />
-    </Route>
-
-    <Route path={PATHS.logIn} element={<Navigate to={PATHS.products} />} />
-    <Route path={PATHS.logOut} element={<Logout />} />
-    <Route path="*" element={<Navigate to={PATHS.notFound} replace />} />
-    <Route path={PATHS.notFound} element={<NotFound />} />
-  </>
-);
-
-const directorRoutes = (
-  <>
-    <Route path="/" element={<Layout />}>
-      <Route index element={<Navigate to={PATHS.products} replace />} />
-
-      <Route path={PATHS.products} element={<Warehouse />} />
-      <Route path={PATHS.productsArchive} element={<Archive />} />
-      <Route path={PATHS.productsCreate} element={<EditProduct />} />
-      <Route path={PATHS.productsEdit + "/:id"} element={<EditProduct />} />
-
-      <Route path={PATHS.distributors} element={<Distributors />} />
       <Route
-        path={PATHS.distributorsProfile + "/:id"}
-        element={<DistributorProfile />}
+        path={PATHS.order + "/:id"}
+        element={
+          <DirectorOrOfficer>
+            <Transaction />
+          </DirectorOrOfficer>
+        }
+      />
+      <Route
+        path={PATHS.return + "/:id"}
+        element={
+          <DirectorOrOfficer>
+            <Transaction />
+          </DirectorOrOfficer>
+        }
+      />
+      <Route
+        path={PATHS.productsEdit + "/:id"}
+        element={
+          <DirectorOnly>
+            <EditProduct />
+          </DirectorOnly>
+        }
       />
       <Route
         path={PATHS.distributorsEdit + "/:id"}
-        element={<EditDistributor />}
+        element={
+          <DirectorOnly>
+            <EditDistributor />
+          </DirectorOnly>
+        }
       />
-      <Route path={PATHS.order + "/:id"} element={<Transaction />} />
-      <Route path={PATHS.return + "/:id"} element={<Transaction />} />
-      <Route path={PATHS.distributorsCreate} element={<EditDistributor />} />
-      <Route path={PATHS.distributorsArchive} element={<Archive />} />
+      <Route
+        path={PATHS.distributorsCreate}
+        element={
+          <DirectorOnly>
+            <EditDistributor />
+          </DirectorOnly>
+        }
+      />
     </Route>
 
     <Route path={PATHS.logIn} element={<Navigate to={PATHS.products} />} />
@@ -105,35 +100,6 @@ export default function App() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
-  //FIX_ME:
-  function getUserRoutes(user) {
-    switch (user) {
-      case "Директор":
-        return directorRoutes;
-      case "Завсклад":
-        return directorRoutes;
-      case "Гость":
-        return directorRoutes;
-
-      default:
-        return publicRoutes;
-    }
-  }
-  /* 
-  function getUserRoutes(user) {
-    switch (user) {
-      case "Директор":
-        return directorRoutes;
-      case "Завсклад":
-        return officerRoutes;
-      case "Гость":
-        return guestRoutes;
-
-      default:
-        return publicRoutes;
-    }
-  } */
-
   useEffect(() => {
     dispatch(fetchOptions());
   }, []);
@@ -145,7 +111,23 @@ export default function App() {
         autoClose={2000}
         draggable={false}
       />
-      <Routes>{getUserRoutes(user)}</Routes>
+      <Routes>{user ? privateRoutes : publicRoutes}</Routes>
     </>
+  );
+}
+
+function DirectorOnly({ children }) {
+  const { isDirector } = usePermissions();
+
+  return isDirector ? children : <Navigate to={PATHS.notFound} replace />;
+}
+
+function DirectorOrOfficer({ children }) {
+  const { isOfficer, isDirector } = usePermissions();
+
+  return isDirector || isOfficer ? (
+    children
+  ) : (
+    <Navigate to={PATHS.notFound} replace />
   );
 }

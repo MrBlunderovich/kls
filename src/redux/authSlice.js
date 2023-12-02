@@ -21,9 +21,13 @@ export const logUserIn = createAsyncThunk(
   },
 );
 
-export const logUserOut = createAsyncThunk(`${name}/logUserOut`, async () => {
-  localStorage.clear();
-});
+export const logUserOut = createAsyncThunk(
+  `${name}/logUserOut`,
+  async (_, { dispatch }) => {
+    localStorage.clear();
+    dispatch(authActions.clearData());
+  },
+);
 
 const initialState = {
   user: localStorage.getItem("user"),
@@ -38,6 +42,9 @@ export const authSlice = createSlice({
     clearError: (state) => {
       if (state.error === ACCESS_DENIED_ERROR) return state;
       state.error = null;
+    },
+    clearData: () => {
+      return initialState;
     },
   },
   extraReducers: (builder) => {
