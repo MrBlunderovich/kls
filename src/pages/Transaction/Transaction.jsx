@@ -63,34 +63,6 @@ export default function Transaction() {
     0,
   );
 
-  useEffect(() => {
-    dispatch(transactionActions.updateSource());
-  }, [targetTotalQuantity, sourceTotalCost]);
-
-  useEffect(() => {
-    dispatch(getDistributorById(id)).unwrap().catch(navigate404);
-  }, [id, dispatch]);
-
-  useEffect(() => {
-    if (isReturn) {
-      dispatch(
-        getOrdersById({ id, queryParams: { category, search_query: search } }),
-      )
-        .unwrap()
-        .catch(showToastError);
-      return;
-    }
-    dispatch(
-      getWarehouseItems({ search_query: search, category, state: "normal" }),
-    );
-  }, [id, search, category, dispatch]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(transactionActions.clearData());
-    };
-  }, []);
-
   function handleSave() {
     setShowSaveModal(true);
   }
@@ -153,6 +125,34 @@ export default function Transaction() {
       })),
     };
   }
+
+  useEffect(() => {
+    dispatch(transactionActions.updateSource());
+  }, [targetTotalQuantity, sourceTotalCost]);
+
+  useEffect(() => {
+    dispatch(getDistributorById(id)).unwrap().catch(navigate404);
+  }, [id]);
+
+  useEffect(() => {
+    if (isReturn) {
+      dispatch(
+        getOrdersById({ id, queryParams: { category, search_query: search } }),
+      )
+        .unwrap()
+        .catch(showToastError);
+      return;
+    }
+    dispatch(
+      getWarehouseItems({ search_query: search, category, state: "normal" }),
+    );
+  }, [id, search, category]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(transactionActions.clearData());
+    };
+  }, []);
 
   return isDistributorLoading ? (
     <Loader />
