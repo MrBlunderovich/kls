@@ -22,6 +22,7 @@ import didFormDataChange from "../../utils/didFormDataChange";
 import showToastError from "../../utils/showToastError";
 import formatPhone from "../../utils/formatPhone";
 import Loader from "../../components/Loader/Loader";
+import isFormValid from "../../utils/isFormValid";
 
 const initialData = {
   photo: null,
@@ -52,7 +53,7 @@ export default function EditDistributor() {
   function handleSubmit(event) {
     event.preventDefault();
     if (isEdit && !didFormDataChange(originalData, formData)) {
-      toast.warn("Ничего не измено");
+      toast.warn("Ничего не изменено");
       return;
     }
     setShowSaveModal(true);

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosPrivate } from "../api/axiosPrivate";
+import showToastLoader from "../utils/showToastLoader";
 
 const name = "product";
 
@@ -20,7 +21,9 @@ export const createProduct = createAsyncThunk(
   `${name}/createProduct`,
   async (formData) => {
     try {
-      const response = await axiosPrivate.post(`/products/`, formData);
+      const response = await showToastLoader(
+        axiosPrivate.post(`/products/`, formData),
+      );
       return response.data;
     } catch (error) {
       return Promise.reject(error.request?.responseText || error);
@@ -33,9 +36,8 @@ export const updateProductById = createAsyncThunk(
   async ({ id, formData, isDefect }) => {
     const suffix = isDefect ? "defect/" : "";
     try {
-      const response = await axiosPrivate.put(
-        `/products/${suffix}${id}/`,
-        formData,
+      const response = await showToastLoader(
+        axiosPrivate.put(`/products/${suffix}${id}/`, formData),
       );
       return response.data;
     } catch (error) {
@@ -49,7 +51,9 @@ export const archiveProductById = createAsyncThunk(
   async ({ id, isDefect }) => {
     const suffix = isDefect ? "defect/" : "";
     try {
-      const response = await axiosPrivate.delete(`/products/${suffix}${id}/`);
+      const response = await showToastLoader(
+        axiosPrivate.delete(`/products/${suffix}${id}/`),
+      );
       return response.data;
     } catch (error) {
       return Promise.reject(error);

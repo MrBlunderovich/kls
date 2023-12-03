@@ -47,7 +47,7 @@ export default function EditProduct() {
   function handleSubmit(e) {
     e.preventDefault();
     if (isEdit && !didFormDataChange(originalData, formData)) {
-      toast.warn("Ничего не измено");
+      toast.warn("Ничего не изменено");
       return;
     }
     setShowSaveModal(true);
