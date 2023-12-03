@@ -154,6 +154,7 @@ export default function DistributorProfile() {
       dataIndex: "unit",
       align: "left",
       width: 100,
+      render: renderUnit,
     },
     {
       title: "Кол-во",

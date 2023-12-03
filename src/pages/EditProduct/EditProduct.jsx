@@ -73,7 +73,7 @@ export default function EditProduct() {
         .then(navigateToWarehouse)
         .catch(showToastError);
     } else {
-      dispatch(createProduct(formData))
+      dispatch(createProduct({ ...formData, warehouse: 1 }))
         .unwrap()
         .then(() => toast.success("Товар успешно создан"))
         .then(navigateToWarehouse)
