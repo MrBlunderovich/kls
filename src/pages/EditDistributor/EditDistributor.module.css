@@ -2,6 +2,10 @@
   padding-bottom: 192px;
 }
 
+.EditDistributor input:user-invalid {
+  border-color: var(--red);
+}
+
 .form {
   display: flex;
   flex-direction: column;

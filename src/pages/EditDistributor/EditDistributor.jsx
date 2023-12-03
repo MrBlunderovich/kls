@@ -49,19 +49,6 @@ export default function EditDistributor() {
   const navigate404 = useNavigateReplace();
   const navigateToDistributors = useNavigateReplace(PATHS.distributors, false);
 
-  useEffect(() => {
-    if (isEdit) {
-      dispatch(getDistributorById(id))
-        .unwrap()
-        .then(setFormData)
-        .catch(navigate404);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    return () => dispatch(distributorActions.clearData());
-  }, []);
-
   function handleSubmit(event) {
     event.preventDefault();
     if (isEdit && !didFormDataChange(originalData, formData)) {
@@ -72,7 +59,6 @@ export default function EditDistributor() {
   }
 
   function handleConfirmSave() {
-    setShowSaveModal(false);
     if (isEdit) {
       dispatch(
         editDistributorById({ id, formData: createFormDataObject(formData) }),
@@ -81,49 +67,22 @@ export default function EditDistributor() {
         .then(() => toast.success("Дистрибьютор успешно сохранен"))
         .then(navigateToDistributors)
         .catch(showToastError);
-      return;
+    } else {
+      dispatch(createDistributor(createFormDataObject(formData)))
+        .unwrap()
+        .then(() => toast.success("Дистрибьютор успешно создан"))
+        .then(navigateToDistributors)
+        .catch(showToastError);
     }
-    dispatch(createDistributor(createFormDataObject(formData)))
-      .unwrap()
-      .then(() => toast.success("Дистрибьютор успешно создан"))
-      .then(navigateToDistributors)
-      .catch(showToastError);
   }
 
   function handleConfirmDelete() {
-    setShowDeleteModal(false);
     dispatch(archiveDistributorById(id))
       .unwrap()
       .then(() => toast.success("Дистрибьютор успешно удален"))
       .then(navigateToDistributors)
       .catch(showToastError);
   }
-
-  function isFormFilled() {
-    const requiredFields = [
-      "name",
-      "region",
-      "inn",
-      "address",
-      "actual_place_of_residence",
-      "passport_series_number",
-      "issued_by",
-      "issue_date",
-      "validity",
-      "contact",
-    ];
-    return requiredFields.every((field) => !!formData[field]);
-  }
-
-  const formIsFilled = isFormFilled();
-
-  const formInputs = formRef.current
-    ? Array.from(formRef.current?.elements).filter((element) => element.name)
-    : [];
-  const formIsValid = !!formInputs.reduce(
-    (acc, item) => acc * item.validity.valid,
-    true,
-  );
 
   function handleInputChange(e) {
     const { name, value } = e.target;
@@ -203,7 +162,18 @@ export default function EditDistributor() {
     return URL.createObjectURL(formData.photo);
   }
 
-  const loadingPlaceholder = isLoading ? "Загрузка..." : null;
+  useEffect(() => {
+    if (isEdit) {
+      dispatch(getDistributorById(id))
+        .unwrap()
+        .then(setFormData)
+        .catch(navigate404);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    return () => dispatch(distributorActions.clearData());
+  }, []);
 
   return isLoading ? (
     <Loader />
@@ -249,9 +219,7 @@ export default function EditDistributor() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder={
-                      loadingPlaceholder || "Пример: Иванов Иван Иванович"
-                    }
+                    placeholder="Пример: Иванов Иван Иванович"
                     required
                   />
                 </label>
@@ -262,10 +230,7 @@ export default function EditDistributor() {
                     name="actual_place_of_residence"
                     value={formData.actual_place_of_residence}
                     onChange={handleInputChange}
-                    placeholder={
-                      loadingPlaceholder ||
-                      "Пример: обл. Чуй, рай. Сокулук, с. Село, "
-                    }
+                    placeholder="Пример: обл. Чуй, рай. Сокулук, с. Село, "
                     required
                   />
                 </label>
@@ -277,10 +242,7 @@ export default function EditDistributor() {
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    placeholder={
-                      loadingPlaceholder ||
-                      "Пример: обл. Чуй, рай. Сокулук, с. Село, "
-                    }
+                    placeholder="Пример: обл. Чуй, рай. Сокулук, с. Село, "
                     required
                   />
                 </label>
@@ -291,7 +253,7 @@ export default function EditDistributor() {
                     name="region"
                     value={formData.region}
                     onChange={handleInputChange}
-                    placeholder={loadingPlaceholder || "Пример: Чуй"}
+                    placeholder="Пример: Чуй"
                     required
                   />
                 </label>
@@ -302,7 +264,7 @@ export default function EditDistributor() {
                     name="passport"
                     value={formData.passport_series_number}
                     onChange={handlePassportChange}
-                    placeholder={loadingPlaceholder || "ID"}
+                    placeholder="ID"
                     required
                     minLength={9}
                     maxLength={9}
@@ -316,7 +278,7 @@ export default function EditDistributor() {
                     name="inn"
                     value={formData.inn}
                     onChange={handleINNChange}
-                    placeholder={loadingPlaceholder || "0000000000"}
+                    placeholder="0000000000"
                     required
                     minLength={14}
                     maxLength={14}
@@ -329,7 +291,7 @@ export default function EditDistributor() {
                     name="issued_by"
                     value={formData.issued_by}
                     onChange={handleInputChange}
-                    placeholder={loadingPlaceholder || "МКК"}
+                    placeholder="МКК"
                     required
                   />
                 </label>
@@ -364,7 +326,7 @@ export default function EditDistributor() {
                         name="contact"
                         value={formatPhone(formData.contact) || ""}
                         onChange={handlePhoneChange}
-                        placeholder={loadingPlaceholder || ""}
+                        placeholder=""
                         required
                         minLength={11}
                         maxLength={11}
@@ -385,7 +347,7 @@ export default function EditDistributor() {
                         name="contact2"
                         value={formatPhone(formData.contact2) || ""}
                         onChange={handlePhoneChange}
-                        placeholder={loadingPlaceholder || ""}
+                        placeholder=""
                         minLength={11}
                         maxLength={11}
                       />
@@ -403,7 +365,7 @@ export default function EditDistributor() {
                       Удалить
                     </CustomButton>
                   )}
-                  <CustomButton width="xwide" disabled={!formIsFilled}>
+                  <CustomButton width="xwide" disabled={!isFormValid(formRef)}>
                     Сохранить
                   </CustomButton>
                 </div>

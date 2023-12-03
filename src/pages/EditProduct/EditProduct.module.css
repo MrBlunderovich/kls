@@ -2,6 +2,10 @@
   padding-bottom: 16px;
 }
 
+.EditProduct input:user-invalid {
+  border-color: var(--red);
+}
+
 .form {
   display: flex;
   flex-direction: column;

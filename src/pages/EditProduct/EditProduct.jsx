@@ -1,5 +1,5 @@
 import styles from "./EditProduct.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import PageHeading from "../../components/PageHeading/PageHeading";
@@ -21,6 +21,7 @@ import showToastError from "../../utils/showToastError";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
 import useEditId from "../../hooks/useEditId";
 import Loader from "../../components/Loader/Loader";
+import isFormValid from "../../utils/isFormValid";
 
 const initialData = {
   name: "",
@@ -36,24 +37,12 @@ export default function EditProduct() {
   const [formData, setFormData] = useState(initialData);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const formRef = useRef(null);
   const dispatch = useDispatch();
   const { originalData, isLoading } = useSelector((state) => state.product);
   const { id, isEdit, isDefect } = useEditId();
   const navigate404 = useNavigateReplace();
   const navigateToWarehouse = useNavigateReplace(PATHS.products, false);
-
-  useEffect(() => {
-    if (isEdit) {
-      dispatch(getProductById({ id, isDefect }))
-        .unwrap()
-        .then(setFormData)
-        .catch(navigate404);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    return () => dispatch(productActions.clearData());
-  }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -65,7 +54,6 @@ export default function EditProduct() {
   }
 
   function handleConfirmSave() {
-    setShowSaveModal(false);
     if (isEdit) {
       dispatch(updateProductById({ id, formData, isDefect }))
         .unwrap()
@@ -82,7 +70,6 @@ export default function EditProduct() {
   }
 
   function handleConfirmDelete() {
-    setShowDeleteModal(false);
     dispatch(archiveProductById({ id, isDefect }))
       .unwrap()
       .then(() => toast.success("Товар успешно удален"))
@@ -111,11 +98,20 @@ export default function EditProduct() {
     handleInputChange(e);
   }
 
-  const isFormValid = Object.values(formData).every((field) => field !== "");
-
   const sum = (formData.quantity * formData.price).toLocaleString("de-CH");
 
-  const loadingPlaceholder = isLoading ? "Загрузка..." : null;
+  useEffect(() => {
+    if (isEdit) {
+      dispatch(getProductById({ id, isDefect }))
+        .unwrap()
+        .then(setFormData)
+        .catch(navigate404);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    return () => dispatch(productActions.clearData());
+  }, []);
 
   return isLoading ? (
     <Loader />
@@ -127,7 +123,7 @@ export default function EditProduct() {
           modalOnLeave={true}
         />
         <FormContainer>
-          <form className={styles.form} onSubmit={handleSubmit}>
+          <form className={styles.form} ref={formRef} onSubmit={handleSubmit}>
             <fieldset className={styles.formFlexRow}>
               <label className={styles.formInput}>
                 <p>Наименование</p>
@@ -136,7 +132,7 @@ export default function EditProduct() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder={loadingPlaceholder || "Пример: Пиво"}
+                  placeholder="Пример: Пиво"
                   required
                 />
               </label>
@@ -147,7 +143,7 @@ export default function EditProduct() {
                   name="identification_number"
                   value={formData.identification_number}
                   onChange={handleBarcodeChange}
-                  placeholder={loadingPlaceholder || ""}
+                  placeholder=""
                   required
                 />
               </label>
@@ -174,7 +170,7 @@ export default function EditProduct() {
                   name="quantity"
                   value={formData.quantity}
                   onChange={handleNumericInputChange}
-                  placeholder={loadingPlaceholder || "Пример: 1000"}
+                  placeholder="Пример: 1000"
                   autoComplete="off"
                   required
                 />
@@ -186,7 +182,7 @@ export default function EditProduct() {
                   name="price"
                   value={formData.price}
                   onChange={handleNumericInputChange}
-                  placeholder={loadingPlaceholder || "0"}
+                  placeholder="0"
                   autoComplete="off"
                   required
                 />
@@ -248,7 +244,11 @@ export default function EditProduct() {
                   Удалить
                 </CustomButton>
               )}
-              <CustomButton type="submit" width="xwide" disabled={!isFormValid}>
+              <CustomButton
+                type="submit"
+                width="xwide"
+                disabled={!isFormValid(formRef)}
+              >
                 Сохранить
               </CustomButton>
             </div>
