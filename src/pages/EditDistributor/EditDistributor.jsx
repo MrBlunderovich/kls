@@ -140,10 +140,10 @@ export default function EditDistributor() {
     setFormData({ ...formData, passport_series_number: upperCaseValue });
   }
 
-  const handlePhotoChange = (e) => {
+  function handlePhotoChange(e) {
     const photo = e.target.files[0];
     setFormData({ ...formData, photo });
-  };
+  }
 
   function createFormDataObject(data) {
     const dataWithPhoto = { ...data };

@@ -42,12 +42,6 @@ export default function DistributorProfile() {
   const { setCategory, setSales, setStartDate, setEndDate, clearData } =
     profileActions;
 
-  const queryParams = {
-    category,
-    start_date: startDate,
-    end_date: endDate,
-  };
-
   const orderColumns = [
     {
       title: "№",
@@ -173,6 +167,12 @@ export default function DistributorProfile() {
       render: renderCondition,
     },
   ];
+
+  const queryParams = {
+    category,
+    start_date: startDate,
+    end_date: endDate,
+  };
 
   useEffect(() => {
     dispatch(getDistributorById(id)).unwrap().catch(navigate404);

@@ -172,7 +172,7 @@ export default function Archive() {
     const entity = isWarehouse ? "products" : "distributors";
     dispatch(fetchArchiveItems(entity)).unwrap().catch(showToastError);
     return () => dispatch(archiveActions.clearData());
-  }, [isWarehouse, dispatch]);
+  }, [isWarehouse]);
 
   return (
     <div className={styles.Archive}>
