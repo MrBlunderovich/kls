@@ -1,8 +1,11 @@
 import styles from "./Distributors.module.css";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { fetchDistributors } from "../../redux/distributorsSlice";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  distributorsActions,
+  fetchDistributors,
+} from "../../redux/distributorsSlice";
 import CustomButton from "../../components/UI/CustomButton/CustomButton";
 import TableButton from "../../components/UI/TableButton/TableButton";
 import editIcon from "../../assets/icons/mode_edit.svg";
@@ -12,16 +15,12 @@ import renderIndex from "../../utils/renderIndex";
 import usePermissions from "../../hooks/usePermissions";
 
 export default function Distributors() {
-  const { distributors, isLoading, error } = useSelector(
+  const { distributors, isLoading } = useSelector(
     (state) => state.distributors,
   );
   const { isDirector } = usePermissions();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchDistributors());
-  }, []);
 
   const tableColumns = [
     {
@@ -70,6 +69,11 @@ export default function Distributors() {
         </Link>
       ),
     });
+
+  useEffect(() => {
+    dispatch(fetchDistributors());
+    return () => dispatch(distributorsActions.clearData());
+  }, []);
 
   return (
     <div className={styles.Distributors}>

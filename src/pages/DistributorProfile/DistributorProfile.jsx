@@ -48,30 +48,6 @@ export default function DistributorProfile() {
     end_date: endDate,
   };
 
-  useEffect(() => {
-    dispatch(getDistributorById(id)).unwrap().catch(navigate404);
-    return () => dispatch(clearData());
-  }, [id]);
-
-  useEffect(() => {
-    if (isReturns) {
-      dispatch(
-        getReturnHistoryById({
-          id,
-          queryParams,
-          target: "returns",
-        }),
-      );
-      return;
-    }
-    dispatch(
-      getOrderHistoryById({
-        id,
-        queryParams,
-      }),
-    );
-  }, [category, startDate, endDate, dispatch, isReturns]);
-
   const orderColumns = [
     {
       title: "№",
@@ -197,6 +173,30 @@ export default function DistributorProfile() {
       render: renderCondition,
     },
   ];
+
+  useEffect(() => {
+    dispatch(getDistributorById(id)).unwrap().catch(navigate404);
+    return () => dispatch(clearData());
+  }, [id]);
+
+  useEffect(() => {
+    if (isReturns) {
+      dispatch(
+        getReturnHistoryById({
+          id,
+          queryParams,
+          target: "returns",
+        }),
+      );
+      return;
+    }
+    dispatch(
+      getOrderHistoryById({
+        id,
+        queryParams,
+      }),
+    );
+  }, [category, startDate, endDate, dispatch, isReturns]);
 
   return isDistributorLoading ? (
     <Loader />

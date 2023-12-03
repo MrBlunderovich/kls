@@ -8,11 +8,9 @@ import { transactionActions } from "../../../redux/transactionSlice";
 import QuantityController from "../../../components/UI/QuantityController/QuantityController";
 import TransactionSection from "../../../components/TransactionSection/TransactionSection";
 import renderSum from "../../../utils/renderSum";
-import renderDate from "../../../utils/renderDate";
 import renderIndex from "../../../utils/renderIndex";
 import {
   S_ACTION_WIDTH,
-  S_DATE_WIDTH,
   S_INDEX_WIDTH,
   S_PRICE_WIDTH,
   S_QCONTROL_WIDTH,

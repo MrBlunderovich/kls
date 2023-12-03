@@ -34,12 +34,6 @@ export default function Archive() {
     isWarehouse &&
     items?.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-  useEffect(() => {
-    const entity = isWarehouse ? "products" : "distributors";
-    dispatch(fetchArchiveItems(entity)).unwrap().catch(showToastError);
-    return () => dispatch(archiveActions.clearData());
-  }, [isWarehouse, dispatch]);
-
   function restoreFromArchive(entity, id, destination) {
     const successMessage = isWarehouse
       ? "Товар успешно восстановлен"
@@ -173,6 +167,12 @@ export default function Archive() {
       ),
     },
   ];
+
+  useEffect(() => {
+    const entity = isWarehouse ? "products" : "distributors";
+    dispatch(fetchArchiveItems(entity)).unwrap().catch(showToastError);
+    return () => dispatch(archiveActions.clearData());
+  }, [isWarehouse, dispatch]);
 
   return (
     <div className={styles.Archive}>

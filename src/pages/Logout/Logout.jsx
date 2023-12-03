@@ -11,7 +11,7 @@ export default function Logout() {
   }, []);
   return (
     <div className={styles.Logout}>
-      <h1>Logging out...</h1>
+      <h2>Logging out...</h2>
     </div>
   );
 }
