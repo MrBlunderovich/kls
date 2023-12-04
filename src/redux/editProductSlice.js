@@ -39,6 +39,12 @@ export const updateProductById = createAsyncThunk(
       const response = await showToastLoader(
         axiosPrivate.put(`/products/${suffix}${id}/`, formData),
       );
+      /* const updateConditionResponse = await showToastLoader(
+        axiosPrivate.post(`/products/${suffix}change-state-and-move/${id}/`, 
+        {
+          newState:formData.state
+        })
+      ) */
       return response.data;
     } catch (error) {
       return Promise.reject(error.request?.responseText || error);

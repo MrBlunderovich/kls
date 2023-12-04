@@ -110,6 +110,7 @@ export default function Return({
         //-------------------add to target
         <OrderButton
           variant="add"
+          disabled={record.quantity < 1}
           onClick={() => {
             dispatch(transactionActions.addItemToTarget(record));
           }}
