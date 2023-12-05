@@ -31,20 +31,36 @@ export const createProduct = createAsyncThunk(
   },
 );
 
+export const moveProductbyId = createAsyncThunk(
+  `${name}/moveProductbyId`,
+  async ({ id, targetCondition }) => {
+    try {
+      if (targetCondition === "defect") {
+        await showToastLoader(
+          axiosPrivate.post(`/products/move_normal_to_defect/${id}/`),
+        );
+      } else {
+        await showToastLoader(
+          axiosPrivate.post(`/products/move_defect_to_normal/${id}/`),
+        );
+      }
+      return;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
+);
+
 export const updateProductById = createAsyncThunk(
-  `${name}/updateNormalProductById`,
+  `${name}/updateProductById`,
   async ({ id, formData, isDefect }) => {
     const suffix = isDefect ? "defect/" : "";
+
     try {
       const response = await showToastLoader(
         axiosPrivate.put(`/products/${suffix}${id}/`, formData),
       );
-      /* const updateConditionResponse = await showToastLoader(
-        axiosPrivate.post(`/products/${suffix}change-state-and-move/${id}/`, 
-        {
-          newState:formData.state
-        })
-      ) */
+
       return response.data;
     } catch (error) {
       return Promise.reject(error.request?.responseText || error);

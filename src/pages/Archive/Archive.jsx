@@ -80,7 +80,7 @@ export default function Archive() {
     },
     {
       title: "Дата удаления",
-      dataIndex: "dataDeletion",
+      dataIndex: "delete_at",
       align: "left",
       width: 110,
       render: renderDate,
@@ -144,7 +144,7 @@ export default function Archive() {
     },
     {
       title: "Дата удаления",
-      dataIndex: "updated_at",
+      dataIndex: "delete_at",
       align: "left",
       width: 115,
       render: renderDate,

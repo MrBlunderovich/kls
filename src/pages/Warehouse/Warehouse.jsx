@@ -18,6 +18,11 @@ import renderUnit from "../../utils/renderUnit";
 import { CATEGORIES, ENDPOINTS, PATHS } from "../../common/constants";
 import showToastError from "../../utils/showToastError";
 import usePermissions from "../../hooks/usePermissions";
+import {
+  archiveProductById,
+  moveProductbyId,
+} from "../../redux/editProductSlice";
+import { toast } from "react-toastify";
 
 export default function Warehouse() {
   const { setCategory, setCondition, setSearch } = warehouseActions;
@@ -73,23 +78,65 @@ export default function Warehouse() {
       width: "11%",
     },
   ];
-  isDirector &&
-    tableColumns.push({
-      title: "Ред.",
-      key: "action",
-      align: "center",
-      width: 78,
-      render: (_, record) => (
-        <Link
-          to={`${PATHS.productsEdit}/${record.id}`}
-          state={{ isDefect: state === "defect" }}
-        >
-          <TableButton>
+  if (isDirector) {
+    if (isDefect) {
+      tableColumns.push({
+        title: "Восстановить",
+        align: "center",
+        width: 78,
+        ellipsis: true,
+        render: (_, record) => (
+          <TableButton onClick={() => handleRestoreDefect(record.id)}>
             <img src={editIcon} alt="edit icon" />
           </TableButton>
-        </Link>
-      ),
-    });
+        ),
+      });
+      tableColumns.push({
+        title: "Удалить",
+        align: "center",
+        width: 78,
+        ellipsis: true,
+        render: (_, record) => (
+          <TableButton onClick={() => handleDeleteDefect(record.id)}>
+            <img src={editIcon} alt="edit icon" />
+          </TableButton>
+        ),
+      });
+    } else {
+      //if normal
+      tableColumns.push({
+        title: "Ред.",
+        align: "center",
+        width: 78,
+        render: (_, record) => (
+          <Link
+            to={`${PATHS.productsEdit}/${record.id}`}
+            state={{ isDefect: state === "defect" }}
+          >
+            <TableButton>
+              <img src={editIcon} alt="edit icon" />
+            </TableButton>
+          </Link>
+        ),
+      });
+    }
+  }
+
+  function handleRestoreDefect(id) {
+    dispatch(moveProductbyId({ id, targetCondition: "normal" }))
+      .unwrap()
+      .then(() => toast.success("Товар успешно восстановлен"))
+      .then(() => dispatch(setCondition("normal")))
+      .catch(showToastError);
+  }
+
+  function handleDeleteDefect(id) {
+    dispatch(archiveProductById({ id, isDefect: true }))
+      .unwrap()
+      .then(() => toast.success("Товар успешно удален"))
+      .then(() => dispatch(setCondition("normal")))
+      .catch(showToastError);
+  }
 
   useEffect(() => {
     if (isDefect) {

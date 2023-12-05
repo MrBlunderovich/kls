@@ -50,6 +50,11 @@ export default function EditDistributor() {
   const navigate404 = useNavigateReplace();
   const navigateToDistributors = useNavigateReplace(PATHS.distributors, false);
 
+  function closeModals() {
+    setShowSaveModal(false);
+    setShowDeleteModal(false);
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
     if (isEdit && !didFormDataChange(originalData, formData)) {
@@ -67,13 +72,15 @@ export default function EditDistributor() {
         .unwrap()
         .then(() => toast.success("Дистрибьютор успешно сохранен"))
         .then(navigateToDistributors)
-        .catch(showToastError);
+        .catch(showToastError)
+        .finally(closeModals);
     } else {
       dispatch(createDistributor(createFormDataObject(formData)))
         .unwrap()
         .then(() => toast.success("Дистрибьютор успешно создан"))
         .then(navigateToDistributors)
-        .catch(showToastError);
+        .catch(showToastError)
+        .finally(closeModals);
     }
   }
 
@@ -82,7 +89,8 @@ export default function EditDistributor() {
       .unwrap()
       .then(() => toast.success("Дистрибьютор успешно удален"))
       .then(navigateToDistributors)
-      .catch(showToastError);
+      .catch(showToastError)
+      .finally(closeModals);
   }
 
   function handleInputChange(e) {

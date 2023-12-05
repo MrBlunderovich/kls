@@ -13,6 +13,7 @@ import {
   archiveProductById,
   createProduct,
   getProductById,
+  moveProductbyId,
   productActions,
   updateProductById,
 } from "../../redux/editProductSlice";
@@ -44,6 +45,15 @@ export default function EditProduct() {
   const navigate404 = useNavigateReplace();
   const navigateToWarehouse = useNavigateReplace(PATHS.products, false);
 
+  function didConditionChange() {
+    return originalData.state !== formData.state;
+  }
+
+  function closeModals() {
+    setShowSaveModal(false);
+    setShowDeleteModal(false);
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     if (isEdit && !didFormDataChange(originalData, formData)) {
@@ -57,15 +67,24 @@ export default function EditProduct() {
     if (isEdit) {
       dispatch(updateProductById({ id, formData, isDefect }))
         .unwrap()
+        .then(() => {
+          if (didConditionChange()) {
+            return dispatch(
+              moveProductbyId({ id, targetCondition: formData.state }),
+            );
+          }
+        })
         .then(() => toast.success("Товар успешно сохранен"))
         .then(navigateToWarehouse)
-        .catch(showToastError);
+        .catch(showToastError)
+        .finally(closeModals);
     } else {
       dispatch(createProduct({ ...formData, warehouse: 1 }))
         .unwrap()
         .then(() => toast.success("Товар успешно создан"))
         .then(navigateToWarehouse)
-        .catch(showToastError);
+        .catch(showToastError)
+        .finally(closeModals);
     }
   }
 
@@ -74,7 +93,8 @@ export default function EditProduct() {
       .unwrap()
       .then(() => toast.success("Товар успешно удален"))
       .then(navigateToWarehouse)
-      .catch(showToastError);
+      .catch(showToastError)
+      .finally(closeModals);
   }
 
   function handleInputChange(e) {
