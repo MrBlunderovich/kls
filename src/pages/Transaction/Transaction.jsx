@@ -83,7 +83,8 @@ export default function Transaction() {
             .catch(showToastError),
         )
         .then(navigateToProfile)
-        .catch(showToastError);
+        .catch(showToastError)
+        .finally(() => setShowSaveModal(false));
     } else {
       // ---------------------------------оформление заказа
       dispatch(postOrderById(composeOrderData()))
@@ -100,7 +101,8 @@ export default function Transaction() {
             .catch(showToastError),
         )
         .then(navigateToProfile)
-        .catch(showToastError);
+        .catch(showToastError)
+        .finally(() => setShowSaveModal(false));
     }
   }
 
