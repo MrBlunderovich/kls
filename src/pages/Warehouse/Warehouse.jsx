@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import CustomButton from "../../components/UI/CustomButton/CustomButton";
 import editIcon from "../../assets/icons/mode_edit.svg";
+import restoreIcon from "../../assets/icons/restore.svg";
+import clearIcon from "../../assets/icons/clear.svg";
 import TableButton from "../../components/UI/TableButton/TableButton";
 import {
   getDefectProducts,
@@ -87,7 +89,7 @@ export default function Warehouse() {
         ellipsis: true,
         render: (_, record) => (
           <TableButton onClick={() => handleRestoreDefect(record.id)}>
-            <img src={editIcon} alt="edit icon" />
+            <img src={restoreIcon} alt="edit icon" />
           </TableButton>
         ),
       });
@@ -98,7 +100,7 @@ export default function Warehouse() {
         ellipsis: true,
         render: (_, record) => (
           <TableButton onClick={() => handleDeleteDefect(record.id)}>
-            <img src={editIcon} alt="edit icon" />
+            <img src={clearIcon} alt="edit icon" />
           </TableButton>
         ),
       });
