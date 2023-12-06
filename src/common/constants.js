@@ -1,4 +1,4 @@
-export const BASE_URL = "http://134.209.252.52:83/api/v1/";
+export const BASE_URL = import.meta.env.VITE_APP_API_URL;
 
 export const ENDPOINTS = {
   login: "/users/login/",
