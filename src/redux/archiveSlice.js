@@ -20,10 +20,14 @@ export const restoreItemById = createAsyncThunk(
   `${name}/restoreItemById`,
   async ({ entity, id, condition }) => {
     const targetArchive =
-      condition === "normal" ? "archive-normal" : "archive-defect";
+      entity === "distributors"
+        ? "/archive"
+        : condition === "normal"
+        ? "/archive-normal"
+        : "/archive-defect";
     try {
       const response = await showToastLoader(
-        axiosPrivate.delete(`/${entity}/${targetArchive}/${id}/`),
+        axiosPrivate.delete(`/${entity}${targetArchive}/${id}/`),
       );
       return response.data;
     } catch (error) {
