@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { axiosDummy } from "../api/axiosDummy";
+//import { axiosDummy } from "../api/axiosDummy";
 
 const name = "options";
 
-export const fetchOptions = createAsyncThunk(
+/* export const fetchOptions = createAsyncThunk(
   `${name}/fetchOptions`,
   async () => {
     try {
@@ -13,7 +13,7 @@ export const fetchOptions = createAsyncThunk(
       return Promise.reject(error);
     }
   },
-);
+); */
 
 const initialState = {
   options: {
@@ -28,12 +28,12 @@ export const optionsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchOptions.fulfilled, (state, action) => {
+    /* builder.addCase(fetchOptions.fulfilled, (state, action) => {
       state.options = action.payload;
     });
     builder.addCase(fetchOptions.rejected, () => {
       console.warn("Failed to fetch options");
-    });
+    }); */
   },
 });
 

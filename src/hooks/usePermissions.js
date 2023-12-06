@@ -7,5 +7,6 @@ export default function usePermissions() {
     isDirector: user === "Директор",
     isOfficer: user === "Завсклад",
     isGuest: user === "Гость",
+    isUserLoggedIn: !!user,
   };
 }

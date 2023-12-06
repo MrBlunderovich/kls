@@ -1,10 +1,8 @@
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
-import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
-import { fetchOptions } from "./redux/optionsSlice";
+import usePermissions from "./hooks/usePermissions";
 import Login from "./pages/Login/Login";
 import Layout from "./components/Layout/Layout";
 import Warehouse from "./pages/Warehouse/Warehouse";
@@ -98,12 +96,7 @@ const privateRoutes = (
 );
 
 export default function App() {
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    dispatch(fetchOptions());
-  }, []);
+  const { isUserLoggedIn } = usePermissions();
 
   return (
     <>
@@ -112,7 +105,7 @@ export default function App() {
         autoClose={2000}
         draggable={false}
       />
-      <Routes>{user ? privateRoutes : publicRoutes}</Routes>
+      <Routes>{isUserLoggedIn ? privateRoutes : publicRoutes}</Routes>
     </>
   );
 }
