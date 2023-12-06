@@ -34,7 +34,8 @@ export default function Archive() {
     isWarehouse &&
     items?.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-  function restoreFromArchive(entity, id, destination) {
+  function restoreFromArchive(entity, record, destination) {
+    const id = record.id;
     const successMessage = isWarehouse
       ? "Товар успешно восстановлен"
       : "Дистрибьютор успешно восстановлен";
@@ -42,6 +43,7 @@ export default function Archive() {
       restoreItemById({
         entity,
         id,
+        condition: record.state,
       }),
     )
       .unwrap()
@@ -90,9 +92,7 @@ export default function Archive() {
       width: 145,
       align: "center",
       render: (_, record) => (
-        <TableButton
-          onClick={() => restoreFromArchive("distributors", record.id)}
-        >
+        <TableButton onClick={() => restoreFromArchive("distributors", record)}>
           <img src={restoreIcon} alt="restore" />
         </TableButton>
       ),
@@ -161,7 +161,7 @@ export default function Archive() {
       align: "center",
       width: 145,
       render: (_, record) => (
-        <TableButton onClick={() => restoreFromArchive("products", record.id)}>
+        <TableButton onClick={() => restoreFromArchive("products", record)}>
           <img src={restoreIcon} alt="restore" />
         </TableButton>
       ),
