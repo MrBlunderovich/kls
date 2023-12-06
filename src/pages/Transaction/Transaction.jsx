@@ -176,7 +176,9 @@ export default function Transaction() {
         <CustomSearch
           className={styles.searchField}
           endpoint={
-            isReturn ? ENDPOINTS.historySearchTips : ENDPOINTS.productSearchTips
+            isReturn
+              ? `${ENDPOINTS.historySearchTips}/${id}`
+              : ENDPOINTS.productSearchTips
           }
           params={category && { category }}
           onSearch={(value) => dispatch(transactionActions.setSearch(value))}

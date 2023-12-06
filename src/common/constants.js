@@ -4,7 +4,7 @@ export const ENDPOINTS = {
   login: "/users/login/",
   productSearchTips: "/products/search",
   defectProductSearchTips: "/products/search",
-  historySearchTips: undefined,
+  historySearchTips: "/transactions/search_sale",
 };
 
 export const UNITS = [
