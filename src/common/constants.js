@@ -2,9 +2,9 @@ export const BASE_URL = import.meta.env.VITE_APP_API_URL;
 
 export const ENDPOINTS = {
   login: "/users/login/",
-  productSearchTips: "/products/search",
-  defectProductSearchTips: "/products/search",
-  historySearchTips: "/transactions/search_sale",
+  productSearchTips: "/products/clue-products",
+  defectProductSearchTips: "/products/clue-defect-products",
+  historySearchTips: "transactions/clue-products-sold",
 };
 
 export const UNITS = [

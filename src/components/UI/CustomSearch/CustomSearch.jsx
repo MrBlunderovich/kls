@@ -57,7 +57,7 @@ export default function CustomSearch({
   async function getSearchMatches() {
     try {
       const response = await axiosPrivate.get(
-        `${endpoint}/?search=${debouncedSearch}`,
+        `${endpoint}/?search_query=${debouncedSearch}`,
       );
       const options = response.data
         .filter((item) => {
