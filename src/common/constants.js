@@ -5,6 +5,7 @@ export const ENDPOINTS = {
   productSearchTips: "/products/clue-products",
   defectProductSearchTips: "/products/clue-defect-products",
   historySearchTips: "transactions/clue-products-sold",
+  categoryOptions: "/products/category-name/",
 };
 
 export const UNITS = [

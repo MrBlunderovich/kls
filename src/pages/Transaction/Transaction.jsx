@@ -20,16 +20,18 @@ import Return from "./Return/Return";
 import useReturnId from "../../hooks/useReturnId";
 import useNavigateReplace from "../../hooks/useNavigateReplace";
 import showToastError from "../../utils/showToastError";
-import { CATEGORIES, ENDPOINTS, PATHS } from "../../common/constants";
+import { ENDPOINTS, PATHS } from "../../common/constants";
 import CustomModal from "../../components/CustomModal/CustomModal";
 import downloadFile from "../../utils/downloadFile";
 import Loader from "../../components/Loader/Loader";
+import useCategories from "../../hooks/useCategories";
 
 ///////////////////////////////////////////////////////////////////////////////
 
 export default function Transaction() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const { id, isReturn } = useReturnId();
+  const categories = useCategories();
   const navigate404 = useNavigateReplace();
   const navigateToProfile = useNavigateReplace(
     `${PATHS.distributorsProfile}/${id}`,
@@ -169,9 +171,9 @@ export default function Transaction() {
         <CustomSelect
           className={styles.categorySelect}
           name="category"
-          value={category}
+          value={categories}
           onChange={(value) => dispatch(transactionActions.setCategory(value))}
-          options={[{ value: "", label: "Все товары" }, ...CATEGORIES]}
+          options={[{ value: "", label: "Все товары" }, ...categories]}
         />
         <CustomSearch
           className={styles.searchField}
@@ -180,7 +182,7 @@ export default function Transaction() {
               ? `${ENDPOINTS.historySearchTips}/${id}`
               : ENDPOINTS.productSearchTips
           }
-          params={category && { category }}
+          category={category}
           onSearch={(value) => dispatch(transactionActions.setSearch(value))}
         />
       </PageHeading>

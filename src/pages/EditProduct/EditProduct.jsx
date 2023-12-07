@@ -8,7 +8,7 @@ import CustomButton from "../../components/UI/CustomButton/CustomButton";
 import CustomRadioButton from "../../components/UI/CustomRadioButton/CustomRadioButton";
 import CustomModal from "../../components/CustomModal/CustomModal";
 import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
-import { CATEGORIES, PATHS, UNITS } from "../../common/constants";
+import { PATHS, UNITS } from "../../common/constants";
 import {
   archiveProductById,
   createProduct,
@@ -23,18 +23,19 @@ import useNavigateReplace from "../../hooks/useNavigateReplace";
 import useEditId from "../../hooks/useEditId";
 import Loader from "../../components/Loader/Loader";
 import isFormValid from "../../utils/isFormValid";
-
-const initialData = {
-  name: "",
-  identification_number: "",
-  unit: UNITS[0].value,
-  quantity: "",
-  price: "",
-  category: CATEGORIES[0].value,
-  state: "normal",
-};
+import useCategories from "../../hooks/useCategories";
 
 export default function EditProduct() {
+  const categories = useCategories();
+  const initialData = {
+    name: "",
+    identification_number: "",
+    unit: UNITS[0].value,
+    quantity: "",
+    price: "",
+    category: categories[0] || "---",
+    state: "normal",
+  };
   const [formData, setFormData] = useState(initialData);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -221,7 +222,7 @@ export default function EditProduct() {
                   className={styles.categorySelect}
                   name="category"
                   value={formData.category}
-                  options={CATEGORIES}
+                  options={categories}
                   onChange={(value) =>
                     setFormData({ ...formData, category: value })
                   }

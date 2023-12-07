@@ -1,26 +1,23 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-//import { axiosDummy } from "../api/axiosDummy";
+import { axiosPrivate } from "../api/axiosPrivate";
+import { ENDPOINTS } from "../common/constants";
 
 const name = "options";
 
-/* export const fetchOptions = createAsyncThunk(
+export const fetchOptions = createAsyncThunk(
   `${name}/fetchOptions`,
   async () => {
     try {
-      const response = await axiosDummy.get(`/options`);
+      const response = await axiosPrivate.get(ENDPOINTS.categoryOptions);
       return response.data;
     } catch (error) {
-      return Promise.reject(error);
+      console.warn(error);
     }
   },
-); */
+);
 
 const initialState = {
-  options: {
-    category: [{ value: "", label: "---" }],
-    unit: [{ value: "", label: "---" }],
-    region: [{ value: "", label: "---" }],
-  },
+  categories: [],
 };
 
 export const optionsSlice = createSlice({
@@ -28,12 +25,12 @@ export const optionsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    /* builder.addCase(fetchOptions.fulfilled, (state, action) => {
-      state.options = action.payload;
+    builder.addCase(fetchOptions.fulfilled, (state, action) => {
+      state.categories = action.payload.map((item) => ({
+        label: item.title,
+        value: item.title,
+      }));
     });
-    builder.addCase(fetchOptions.rejected, () => {
-      console.warn("Failed to fetch options");
-    }); */
   },
 });
 

@@ -2,6 +2,7 @@ import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { useDispatch } from "react-redux";
 import usePermissions from "./hooks/usePermissions";
 import Login from "./pages/Login/Login";
 import Layout from "./components/Layout/Layout";
@@ -17,6 +18,8 @@ import Transaction from "./pages/Transaction/Transaction";
 import { PATHS } from "./common/constants";
 import DirectorOrOfficer from "./components/Routing/DirectorOrOfficer";
 import DirectorOnly from "./components/Routing/DirectorOnly";
+import { useEffect } from "react";
+import { fetchOptions } from "./redux/optionsSlice";
 
 const publicRoutes = (
   <>
@@ -97,6 +100,11 @@ const privateRoutes = (
 
 export default function App() {
   const { isUserLoggedIn } = usePermissions();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchOptions());
+  }, []);
 
   return (
     <>

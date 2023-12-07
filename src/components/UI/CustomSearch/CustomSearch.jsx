@@ -10,8 +10,9 @@ import { axiosPrivate } from "../../../api/axiosPrivate";
 export default function CustomSearch({
   className,
   placeholder = "Поиск...",
+  category = "",
   endpoint = undefined,
-  params = {},
+  //params = {},
   delay = SEARCH_DEBOUNCE_DELAY || 700,
   onSearch = () => undefined,
 }) {
@@ -57,15 +58,16 @@ export default function CustomSearch({
   async function getSearchMatches() {
     try {
       const response = await axiosPrivate.get(
-        `${endpoint}/?search_query=${debouncedSearch}`,
+        `${endpoint}/?search_query=${debouncedSearch}&category=${category}`,
       );
       const options = response.data
-        .filter((item) => {
+        /* .filter((item) => {
           return Object.keys(params).reduce(
             (acc, key) => acc * (item[key] === params[key]),
             true,
           );
-        })
+        }) */
+        .filter((item) => (category ? item.category === category : true))
         .map((item) => ({
           label: item.name,
           value: item.name,

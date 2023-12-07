@@ -17,7 +17,7 @@ import CustomSelect from "../../components/UI/CustomSelect/CustomSelect";
 import CustomSearch from "../../components/UI/CustomSearch/CustomSearch";
 import renderIndex from "../../utils/renderIndex";
 import renderUnit from "../../utils/renderUnit";
-import { CATEGORIES, ENDPOINTS, PATHS } from "../../common/constants";
+import { ENDPOINTS, PATHS } from "../../common/constants";
 import showToastError from "../../utils/showToastError";
 import usePermissions from "../../hooks/usePermissions";
 import {
@@ -25,12 +25,14 @@ import {
   moveProductbyId,
 } from "../../redux/editProductSlice";
 import { toast } from "react-toastify";
+import useCategories from "../../hooks/useCategories";
 
 export default function Warehouse() {
   const { setCategory, setCondition, setSearch } = warehouseActions;
   const { items, isLoading, search, category, state } = useSelector(
     (state) => state.warehouse,
   );
+  const categories = useCategories();
   const { isDirector, isGuest } = usePermissions();
   const dispatch = useDispatch();
   const isDefect = state === "defect";
@@ -166,7 +168,8 @@ export default function Warehouse() {
                 ? ENDPOINTS.defectProductSearchTips
                 : ENDPOINTS.productSearchTips
             }
-            params={category && { category }}
+            /* params={category && { category }} */
+            category={category}
             onSearch={(value) => dispatch(setSearch(value))}
           />
           <CustomSelect
@@ -174,7 +177,7 @@ export default function Warehouse() {
             name="category"
             value={category}
             onChange={(value) => dispatch(setCategory(value))}
-            options={[{ value: "", label: "Все товары" }, ...CATEGORIES]}
+            options={[{ value: "", label: "Все товары" }, ...categories]}
           />
           <CustomSelect
             className={styles.conditionSelect}
