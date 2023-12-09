@@ -8,8 +8,8 @@ import { ACCESS_DENIED_ERROR, TRY_AGAIN_ERROR } from "../../common/constants";
 import CustomButton from "../../components/UI/CustomButton/CustomButton";
 
 export default function Login() {
-  const [username, setLogin] = useState("director");
-  const [password, setPassword] = useState("dev54321");
+  const [username, setLogin] = useState("");
+  const [password, setPassword] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
   const { error, isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
