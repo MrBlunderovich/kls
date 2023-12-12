@@ -22,6 +22,7 @@ import useNavigateReplace from "../../hooks/useNavigateReplace";
 import usePermissions from "../../hooks/usePermissions";
 import Loader from "../../components/Loader/Loader";
 import renderCondition from "../../utils/renderCondition";
+import useCategories from "../../hooks/useCategories";
 
 export default function DistributorProfile() {
   const {
@@ -38,6 +39,7 @@ export default function DistributorProfile() {
   const dispatch = useDispatch();
   const { id } = useParams();
   const navigate404 = useNavigateReplace();
+  const categories = useCategories();
 
   const { setCategory, setSales, setStartDate, setEndDate, clearData } =
     profileActions;
@@ -230,7 +232,7 @@ export default function DistributorProfile() {
           <form className={styles.filterbar}>
             <CustomSelect
               onChange={(value) => dispatch(setCategory(value))}
-              options={[{ label: "Все товары", value: "" }, ...CATEGORIES]}
+              options={[{ label: "Все товары", value: "" }, ...categories]}
               className={styles.select}
             />
             <CustomSelect
