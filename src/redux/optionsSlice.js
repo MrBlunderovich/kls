@@ -26,11 +26,12 @@ export const optionsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchOptions.fulfilled, (state, action) => {
-      state.categories =
-        action?.payload.map((item) => ({
-          label: item.title,
-          value: item.title,
-        })) || [];
+      state.categories = action?.payload
+        ? action.payload.map((item) => ({
+            label: item.title,
+            value: item.title,
+          }))
+        : [];
     });
   },
 });

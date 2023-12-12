@@ -104,7 +104,7 @@ export default function App() {
 
   useEffect(() => {
     dispatch(fetchOptions());
-  }, []);
+  }, [isUserLoggedIn]);
 
   return (
     <>
