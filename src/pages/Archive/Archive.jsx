@@ -22,11 +22,13 @@ import renderCondition from "../../utils/renderCondition";
 import renderUnit from "../../utils/renderUnit";
 import showToastError from "../../utils/showToastError";
 import { renderPhone } from "../../utils/formatPhone";
+import usePermissions from "../../hooks/usePermissions";
 
 export default function Archive() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const { isDirector } = usePermissions();
   const isWarehouse = location.pathname.includes(PATHS.products);
   const { items, isLoading } = useSelector((state) => state.archive);
 
@@ -87,16 +89,6 @@ export default function Archive() {
       width: 110,
       render: renderDate,
     },
-    {
-      title: "Восстановить",
-      width: 145,
-      align: "center",
-      render: (_, record) => (
-        <TableButton onClick={() => restoreFromArchive("distributors", record)}>
-          <img src={restoreIcon} alt="restore" />
-        </TableButton>
-      ),
-    },
   ];
 
   const productColumns = [
@@ -156,7 +148,20 @@ export default function Archive() {
       width: 100,
       render: renderCondition,
     },
-    {
+  ];
+
+  if (isDirector) {
+    distributorColumns.push({
+      title: "Восстановить",
+      width: 145,
+      align: "center",
+      render: (_, record) => (
+        <TableButton onClick={() => restoreFromArchive("distributors", record)}>
+          <img src={restoreIcon} alt="restore" />
+        </TableButton>
+      ),
+    });
+    productColumns.push({
       title: "Восстановить",
       align: "center",
       width: 145,
@@ -165,8 +170,8 @@ export default function Archive() {
           <img src={restoreIcon} alt="restore" />
         </TableButton>
       ),
-    },
-  ];
+    });
+  }
 
   useEffect(() => {
     const entity = isWarehouse ? "products" : "distributors";
