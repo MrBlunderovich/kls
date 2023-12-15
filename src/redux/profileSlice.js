@@ -114,6 +114,7 @@ export const profileSlice = createSlice({
 
 function handleDataPending(state) {
   state.isDataLoading = true;
+  state.data = [];
 }
 
 function handleDataFulfilled(state, action) {

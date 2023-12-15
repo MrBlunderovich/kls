@@ -71,7 +71,7 @@ export default function QuantityController({ value, maxValue, onChange }) {
           onChange={handleChange}
           onBlur={handleBlur}
           onWheel={handleWheel}
-          autoFocus
+          autoFocus={true}
         />
       </span>
       <div className={styles.controls}>
